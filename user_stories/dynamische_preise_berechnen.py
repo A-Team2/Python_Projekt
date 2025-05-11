@@ -3,7 +3,7 @@ from datetime import date
 from business_logic.pricing_manager import PricingManager
 
 def run():
-    print("🧮 Dynamische Preisberechnung für Zimmer")
+    print("Dynamische Preisberechnung für Zimmer")
 
     pricing_manager = PricingManager()
     cancel = False
@@ -43,6 +43,6 @@ def run():
     if not cancel:
         try:
             total_price = pricing_manager.calculate_price(room_id, check_in, check_out, guests)
-            print(f"💰 Gesamtpreis für den Aufenthalt: {total_price:.2f} CHF")
+            print(f"Gesamtpreis für den Aufenthalt: {total_price:.2f} CHF")
         except Exception as e:
             print("Fehler bei Preisberechnung:", e)
