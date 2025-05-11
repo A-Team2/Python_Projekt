@@ -1,5 +1,3 @@
-# user_stories/booking_stornieren.py
-
 from ui import input_helper
 from business_logic.booking_manager import BookingManager
 
