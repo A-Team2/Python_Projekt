@@ -37,7 +37,7 @@ class HotelDataAccess(BaseDataAccess):
         SELECT h.hotel_id, h.name, h.stars, h.address_id
         FROM Hotel h
         JOIN Address a ON h.address_id = a.address_id
-        WHERE a.city = ?
+        WHERE LOWER(a.city) = LOWER(?)
         """
         rows = self.fetchall(sql, (city,))
         hotels = []

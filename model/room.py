@@ -78,25 +78,9 @@ class Room:
     def hotel(self) -> Hotel:
         return self.__hotel
 
-    @hotel.setter
-    def hotel(self, hotel: Hotel) -> None:
-        if hotel is None or not isinstance(hotel, Hotel):
-            raise ValueError("hotel must be a Hotel instance")
-        # Remove old relation.
-        if self.__hotel is not hotel:
-            self.__hotel.remove_room(self)
-            self.__hotel = hotel
-            hotel.add_room(self)
-
     @property
     def room_type(self) -> RoomType:
         return self.__room_type
-
-    @room_type.setter
-    def room_type(self, room_type: RoomType) -> None:
-        if room_type is None or not isinstance(room_type, RoomType):
-            raise ValueError("room_type must be a RoomType instance")
-        self.__room_type = room_type
 
     @property
     def facilities(self) -> list[Facilities]:
@@ -150,6 +134,6 @@ class Room:
         # Prüfe alle Buchungen des Zimmers
         for booking in self.__bookings:
             # Wenn sich die Zeiträume überschneiden, ist das Zimmer nicht verfügbar
-            if (check_in <= booking.check_out and check_out >= booking.check_in):
+            if (check_in <= booking.check_out_date and check_out >= booking.check_in_date):
                 return False
         return True

@@ -41,7 +41,6 @@ class Facilities:
 
     @property
     def rooms(self) -> list[Room]:
-        # Return a copy to protect the internal list
         return self.__rooms.copy()
 
     def add_room(self, room: Room) -> None:

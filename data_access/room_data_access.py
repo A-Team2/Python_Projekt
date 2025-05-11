@@ -2,6 +2,7 @@ from data_access.base_data_access import BaseDataAccess
 from model.room import Room
 from model.hotel import Hotel
 from model.room_type import RoomType
+from data_access.booking_data_access import BookingDataAccess
 
 class RoomDataAccess(BaseDataAccess):
     def read_rooms_by_hotel_id(self, hotel_id: int, hotel: Hotel = None) -> list[Room]:
@@ -44,6 +45,11 @@ class RoomDataAccess(BaseDataAccess):
                 type_id, description, max_guests = room_type_row
                 room_type = RoomType(type_id, description, max_guests)
                 room = Room(room_id, room_number, price_per_night, hotel_obj, room_type)
+                # Buchungen laden und zuweisen
+                booking_da = BookingDataAccess()
+                bookings = booking_da.read_bookings_by_room(room_id)
+                for booking in bookings:
+                    room.add_booking(booking)
                 rooms.append(room)
         return rooms
 
@@ -89,6 +95,11 @@ class RoomDataAccess(BaseDataAccess):
                         type_id, description, max_guests = room_type_row
                         room_type = RoomType(type_id, description, max_guests)
                         room = Room(room_id, room_number, price_per_night, hotel, room_type)
+                        # Buchungen laden und zuweisen
+                        booking_da = BookingDataAccess()
+                        bookings = booking_da.read_bookings_by_room(room_id)
+                        for booking in bookings:
+                            room.add_booking(booking)
                         rooms.append(room)
         
         return rooms

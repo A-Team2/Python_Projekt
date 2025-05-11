@@ -67,13 +67,6 @@ class Hotel:
     def address(self) -> Address:
         return self.__address
 
-    @address.setter
-    def address(self, address: Address) -> None:
-        from model.address import Address
-        if address is None or not isinstance(address, Address):
-            raise ValueError("address must be an Address instance")
-        self.__address = address
-
     @property
     def rooms(self) -> list[Room]:
         # Return a copy so that the caller cannot modify the private list directly.

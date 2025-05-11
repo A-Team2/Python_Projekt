@@ -1,4 +1,7 @@
 from __future__ import annotations
+from datetime import date
+from model.guest import Guest
+from model.invoice import Invoice
 
 class Booking:
     """
@@ -48,7 +51,7 @@ class Booking:
             self.add_room(room)
 
         # Composition: create Invoice  
-        self.__invoice: Invoice = Invoice(self, issue_date=check_out_date, amount=total_amount)
+        self.__invoice: Invoice = Invoice(self, issue_date=check_out_date, total_amount=total_amount)
 
     def __repr__(self) -> str:
         return (
@@ -65,21 +68,9 @@ class Booking:
     def check_in_date(self) -> date:
         return self.__check_in_date
 
-    @check_in_date.setter
-    def check_in_date(self, dt: date) -> None:
-        if not isinstance(dt, date):
-            raise ValueError("check_in_date must be date")
-        self.__check_in_date = check_in_new_date
-
     @property
     def check_out_date(self) -> date:
         return self.__check_out_date
-
-    @check_out_date.setter
-    def check_out_date(self, dt: date) -> None:
-        if not isinstance(dt, date):
-            raise ValueError("check_out_date must be date")
-        self.__check_out_date = check_out_new_date
 
     @property
     def is_cancelled(self) -> bool:
@@ -104,18 +95,6 @@ class Booking:
     @property
     def guest(self) -> Guest:
         return self.__guest
-
-    @guest.setter
-    def guest(self, guest: Guest) -> None:
-        from model.guest import Guest
-        if guest is None or not isinstance(guest, Guest):
-            raise ValueError("guest must be a Guest instance")
-        # change association
-        old = self.__guest
-        if old is not guest:
-            old.remove_booking(self)
-            self.__guest = guest
-            guest.add_booking(self)
 
     @property
     def rooms(self) -> list[Room]:

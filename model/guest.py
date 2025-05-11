@@ -1,4 +1,5 @@
 from __future__ import annotations
+from model.address import Address
 
 class Guest:
     """
@@ -79,13 +80,6 @@ class Guest:
     @property
     def address(self) -> Address:
         return self.__address
-
-    @address.setter
-    def address(self, address: Address) -> None:
-        from model.address import Address
-        if address is None or not isinstance(address, Address):
-            raise ValueError("address must be an Address instance")
-        self.__address = address
 
     @property
     def bookings(self) -> list[Booking]:

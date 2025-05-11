@@ -1,5 +1,6 @@
 import sys
 from enum import Enum
+from datetime import datetime, date
 
 # Enum for Yes/No input
 class YesOrNo(Enum):
@@ -27,10 +28,12 @@ class StringLengthError(ValueError):
         self.max_length = max_length
 
 # Validates string input with length constraints
-def input_valid_string(prompt: str, min_length: int = 0, max_length: int = sys.maxsize) -> str:
+def input_valid_string(prompt: str, min_length: int = 0, max_length: int = sys.maxsize, normalize_func=None) -> str:
     user_input = input(prompt).strip()
     if not (min_length <= len(user_input) <= max_length):
         raise StringLengthError(user_input, min_length, max_length)
+    if normalize_func:
+        user_input = normalize_func(user_input)
     return user_input
 
 # Validates integer input with optional default value
@@ -87,3 +90,31 @@ def input_y_n(prompt: str, default: YesOrNo = None) -> bool:
         return bool(default.value)
     else:
         raise ValueError("Invalid input. Please enter 'y' or 'n'.")
+
+def input_valid_date(prompt: str, min_date: date = None, max_date: date = None, compare_date: date = None, compare_type: str = None) -> date:
+    while True:
+        user_input = input(prompt).strip()
+        try:
+            parsed_date = datetime.strptime(user_input, "%Y-%m-%d").date()
+            if min_date and parsed_date < min_date:
+                print(f"Datum muss nach {min_date} liegen.")
+                continue
+            if max_date and parsed_date > max_date:
+                print(f"Datum muss vor {max_date} liegen.")
+                continue
+            if compare_date and compare_type:
+                if compare_type == 'gt' and not (parsed_date > compare_date):
+                    print(f"Datum muss nach {compare_date} liegen.")
+                    continue
+                if compare_type == 'ge' and not (parsed_date >= compare_date):
+                    print(f"Datum muss am oder nach {compare_date} liegen.")
+                    continue
+                if compare_type == 'lt' and not (parsed_date < compare_date):
+                    print(f"Datum muss vor {compare_date} liegen.")
+                    continue
+                if compare_type == 'le' and not (parsed_date <= compare_date):
+                    print(f"Datum muss am oder vor {compare_date} liegen.")
+                    continue
+            return parsed_date
+        except ValueError:
+            print("Ungültiges Datum. Bitte im Format JJJJ-MM-TT eingeben.")
