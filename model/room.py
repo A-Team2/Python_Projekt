@@ -1,4 +1,9 @@
 from __future__ import annotations
+from datetime import date
+from model.hotel import Hotel
+from model.room_type import RoomType
+from model.facilities import Facilities
+from model.booking import Booking
 
 class Room:
     """
@@ -8,7 +13,7 @@ class Room:
     def __init__(
         self,
         room_id: int,
-        room_no: int,
+        room_number: int,
         price_per_night: float,
         hotel: Hotel,
         room_type: RoomType
@@ -16,8 +21,8 @@ class Room:
         # Validation
         if room_id is None or not isinstance(room_id, int):
             raise ValueError("room_id is required and must be int")
-        if room_no is None or not isinstance(room_no, int):
-            raise ValueError("room_no is required and must be int")
+        if room_number is None or not isinstance(room_number, int):
+            raise ValueError("room_number is required and must be int")
         if price_per_night is None or not isinstance(price_per_night, float):
             raise ValueError("price_per_night is required and must be float")
         if hotel is None or not isinstance(hotel, Hotel):
@@ -27,12 +32,12 @@ class Room:
 
         # private Attributes
         self.__room_id: int = room_id
-        self.__room_no: int = room_no
+        self.__room_number: int = room_number
         self.__price_per_night: float = price_per_night
         self.__hotel: Hotel = hotel
         self.__room_type: RoomType = room_type
 
-        # Registers the room with the hotel and establishes the hotel’s reference in the room (bidirectional association).
+        # Registers the room with the hotel and establishes the hotel's reference in the room (bidirectional association).
         self.__hotel.add_room(self)
 
         # Initialize associations to Facilities and Bookings.
@@ -41,7 +46,7 @@ class Room:
 
     def __repr__(self) -> str:
         return (
-            f"Room(id={self.__room_id!r}, no={self.__room_no!r}, "
+            f"Room(id={self.__room_id!r}, number={self.__room_number!r}, "
             f"price={self.__price_per_night!r}, hotel={self.__hotel!r})"
         )
 
@@ -50,14 +55,14 @@ class Room:
         return self.__room_id
 
     @property
-    def room_no(self) -> int:
-        return self.__room_no
+    def room_number(self) -> int:
+        return self.__room_number
 
-    @room_no.setter
-    def room_no(self, room_no: int) -> None:
-        if room_no is None or not isinstance(room_no, int):
-            raise ValueError("room_no must be int")
-        self.__room_no = room_no
+    @room_number.setter
+    def room_number(self, room_number: int) -> None:
+        if room_number is None or not isinstance(room_number, int):
+            raise ValueError("room_number must be int")
+        self.__room_number = room_number
 
     @property
     def price_per_night(self) -> float:
@@ -75,7 +80,6 @@ class Room:
 
     @hotel.setter
     def hotel(self, hotel: Hotel) -> None:
-        from model.hotel import Hotel
         if hotel is None or not isinstance(hotel, Hotel):
             raise ValueError("hotel must be a Hotel instance")
         # Remove old relation.
@@ -90,7 +94,6 @@ class Room:
 
     @room_type.setter
     def room_type(self, room_type: RoomType) -> None:
-        from model.room_type import RoomType
         if room_type is None or not isinstance(room_type, RoomType):
             raise ValueError("room_type must be a RoomType instance")
         self.__room_type = room_type
@@ -101,14 +104,12 @@ class Room:
         return self.__facilities.copy()
 
     def add_facility(self, facility: Facilities) -> None:
-        from model.facilities import Facilities
         if not isinstance(facility, Facilities):
             raise ValueError("facility must be a Facilities instance")
         if facility not in self.__facilities:
             self.__facilities.append(facility)
 
     def remove_facility(self, facility: Facilities) -> None:
-        from model.facilities import Facilities
         if facility in self.__facilities:
             self.__facilities.remove(facility)
 
@@ -117,17 +118,38 @@ class Room:
         return self.__bookings.copy()
 
     def add_booking(self, booking: Booking) -> None:
-        from model.booking import Booking
         if not isinstance(booking, Booking):
             raise ValueError("booking must be a Booking instance")
         if booking not in self.__bookings:
             self.__bookings.append(booking)
 
     def remove_booking(self, booking: Booking) -> None:
-        from model.booking import Booking
         if booking in self.__bookings:
             self.__bookings.remove(booking)
 
     def get_room_details(self) -> str:
         # Returns a short description of the room.
-        return f"Zimmer {self.__room_no}, Preis: {self.__price_per_night:.2f} CHF/Nacht"
+        return f"Zimmer {self.__room_number}, Preis: {self.__price_per_night:.2f} CHF/Nacht"
+
+    def is_available(self, check_in: date, check_out: date) -> bool:
+        """
+        Prüft, ob das Zimmer im angegebenen Zeitraum verfügbar ist.
+        
+        Args:
+            check_in: Anreisedatum
+            check_out: Abreisedatum
+            
+        Returns:
+            bool: True wenn das Zimmer verfügbar ist, False wenn nicht
+        """
+        if not isinstance(check_in, date) or not isinstance(check_out, date):
+            raise ValueError("check_in und check_out müssen vom Typ date sein")
+        if check_in >= check_out:
+            raise ValueError("check_in muss vor check_out liegen")
+            
+        # Prüfe alle Buchungen des Zimmers
+        for booking in self.__bookings:
+            # Wenn sich die Zeiträume überschneiden, ist das Zimmer nicht verfügbar
+            if (check_in <= booking.check_out and check_out >= booking.check_in):
+                return False
+        return True

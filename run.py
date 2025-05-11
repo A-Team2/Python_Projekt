@@ -21,7 +21,41 @@ hotel_manager = HotelManager()
 
 # andere Manager bei Bedarf...
 
-# 4. User Stories starten (Beispiel)
-print("🏨 Hotel in Stadt anzeigen (US 1.1)")
-from user_stories import Hotel_in_Stadt
-Hotel_in_Stadt.run(hotel_manager)
+def show_menu():
+    print("\n=== Hotel Reservierungssystem ===")
+    print("1. Hotel in Stadt anzeigen (US 1.1)")
+    print("2. Hotels in Stadt mit Mindeststerne anzeigen (US 1.2)")
+    print("3. Hotels in Stadt mit Zimmern für Gästeanzahl anzeigen (US 1.3)")
+    print("0. Beenden")
+    print("================================")
+
+def run_user_story(choice):
+    if choice == 1:
+        print("\n🏨 Hotel in Stadt anzeigen (US 1.1)")
+        from user_stories import Hotel_in_Stadt
+        Hotel_in_Stadt.run(hotel_manager)
+    elif choice == 2:
+        print("\n🏨 Hotels in Stadt mit Mindeststerne anzeigen (US 1.2)")
+        from user_stories import Hotel_in_Stadt_Sterne
+        Hotel_in_Stadt_Sterne.run(hotel_manager)
+    elif choice == 3:
+        print("\n🏨 Hotels in Stadt mit Zimmern für Gästeanzahl anzeigen (US 1.3)")
+        from user_stories import Hotel_in_Stadt_Zimmer_Gästeanzahl
+        Hotel_in_Stadt_Zimmer_Gästeanzahl.run(hotel_manager)
+    else:
+        print("Ungültige Auswahl!")
+        
+# 4. Hauptprogramm
+while True:
+    show_menu()
+    try:
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-3): ", min_value=0, max_value=3)
+        if choice == 0:
+            print("\nProgramm wird beendet. Auf Wiedersehen!")
+            break
+        run_user_story(choice)
+    except input_helper.EmptyInputError:
+        print("\nProgramm wird beendet. Auf Wiedersehen!")
+        break
+    except ValueError as err:
+        print("Fehler:", err)

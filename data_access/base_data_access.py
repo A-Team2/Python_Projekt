@@ -6,13 +6,8 @@ from typing import Optional
 
 class BaseDataAccess:
     def __init__(self, db_connection_str: Optional[str] = None):
-        if db_connection_str is None:
-            # Hole Pfad aus Umgebungsvariable (z. B. DB_FILE=hotel.db)
-            self.__db_connection_str = os.environ.get("DB_FILE")
-            if self.__db_connection_str is None:
-                raise Exception("DB_FILE environment variable and parameter path is not set.")
-        else:
-            self.__db_connection_str = db_connection_str
+        # Immer die working_hotel.db verwenden
+        self.__db_connection_str = "database/working_hotel.db"
 
     def _connect(self):
         # Öffnet die Verbindung mit aktivem Datums-Support
