@@ -103,7 +103,7 @@ class Guest:
 
     def remove_booking(self, booking: Booking) -> None:
         # Removes the association between this Guest and a Booking.
-        The Booking object itself continues to exist.
+        #The Booking object itself continues to exist.
         from model.booking import Booking
         if booking in self.__bookings:
             self.__bookings.remove(booking)

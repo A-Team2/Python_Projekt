@@ -1,4 +1,6 @@
 from __future__ import annotations
+from model.address import Address
+
 
 class Hotel:
     """

@@ -1,5 +1,5 @@
 from data_access.base_data_access import BaseDataAccess
-from model.adress import Address  
+from model.address import Address
 
 class AddressDataAccess(BaseDataAccess):
     def create_address(self, address: Address) -> int:
@@ -13,7 +13,7 @@ class AddressDataAccess(BaseDataAccess):
 
     def read_address_by_id(self, address_id: int) -> Address | None:
         sql = """
-        SELECT address_id, street, city, zip
+        SELECT address_id, street, city, zip_code
         FROM address
         WHERE address_id = ?
         """

@@ -130,4 +130,4 @@ class Room:
 
     def get_room_details(self) -> str:
         # Returns a short description of the room.
-        return f"Zimmer {self.__room_no}, Preis: {self.__price_per_night:.2f} CHF/Nacht
+        return f"Zimmer {self.__room_no}, Preis: {self.__price_per_night:.2f} CHF/Nacht"
