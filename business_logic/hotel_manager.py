@@ -55,4 +55,25 @@ class HotelManager:
 
         return matching_hotels
 
-#test
+    def get_hotels_by_all_criteria(
+        self,
+        city: str,
+        min_stars: int,
+        guests: int,
+        check_in: date,
+        check_out: date
+    ) -> list[model.Hotel]:
+        # Filtere Hotels anhand aller Kriterien
+        hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
+        matching_hotels = []
+
+        for hotel in hotels_in_city:
+            if hotel.stars < min_stars:
+                continue  # überspringe Hotels mit zu wenig Sternen
+
+            for room in hotel.rooms:
+                # Prüfe: ist Zimmer frei & bietet genug Platz?
+                if room.is_available(check_in, check_out) and room.room_type.max_guests >= guests:
+                    matching_hotels.append(hotel)
+                    break  # ein passendes Zimmer reicht
+        return matching_hotels
