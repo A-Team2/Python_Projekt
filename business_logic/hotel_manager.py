@@ -54,3 +54,5 @@ class HotelManager:
                     break  # Nur ein freies Zimmer reicht
 
         return matching_hotels
+
+#test
