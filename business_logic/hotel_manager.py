@@ -23,9 +23,8 @@ class HotelManager:
         return [h for h in hotels_in_city if h.stars >= min_stars]
 
     def get_hotels_by_city_and_guests(self, city: str, guests: int) -> list[Hotel]:
-        """
-        Gibt Hotels in der Stadt zurück, die mindestens ein Zimmer mit ausreichender Gästeanzahl anbieten.
-        """
+        #Gibt Hotels in der Stadt zurück, die mindestens ein Zimmer mit ausreichender Gästeanzahl anbieten.
+        
         hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
         matching_hotels = []
 
@@ -43,10 +42,8 @@ class HotelManager:
         check_in: date,
         check_out: date
     ) -> list[Hotel]:
-        """
-        Gibt alle Hotels in der Stadt zurück, die im gewünschten Zeitraum
-        mindestens ein verfügbares Zimmer haben.
-        """
+        #Gibt alle Hotels in der Stadt zurück, die im gewünschten Zeitraum mindestens ein verfügbares Zimmer haben.
+        
         hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
         matching_hotels = []
 
