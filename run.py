@@ -27,6 +27,7 @@ def show_menu():
     print("2. Hotels in Stadt mit Mindeststerne anzeigen (US 1.2)")
     print("3. Hotels in Stadt mit Zimmern für Gästeanzahl anzeigen (US 1.3)")
     print("4. Hotel in Stadt suchen Aufenthalt (US 1.4)")
+    print("5. Zimmertypen eines Hotels anzeigen (US 2.0)")
     print("0. Beenden")
     print("================================")
 
@@ -47,6 +48,10 @@ def run_user_story(choice):
         print("\n🏨 Hotel in Stadt suchen nach bestimmten Aufenthalt (US 1.4)")
         from user_stories import Hotel_in_Stadt_suchen_Aufenthalt
         Hotel_in_Stadt_suchen_Aufenthalt.run(hotel_manager)
+    elif choice == 5:
+        print("\n🏨 Zimmertypen eines Hotels anzeigen (US 2.0)")
+        from user_stories import Zimmerypen_Hotel
+        Zimmerypen_Hotel.run(hotel_manager)
     else:
         print("Ungültige Auswahl!")
         
@@ -54,7 +59,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-4): ", min_value=0, max_value=4)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-5): ", min_value=0, max_value=5)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break

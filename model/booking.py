@@ -96,6 +96,12 @@ class Booking:
     def guest(self) -> Guest:
         return self.__guest
 
+    @guest.setter
+    def guest(self, guest: Guest) -> None:
+        if guest is None or not isinstance(guest, Guest):
+             raise ValueError("guest must be a Guest instance or None")
+        self.__guest = guest
+
     @property
     def rooms(self) -> list[Room]:
         # return copy to protect internal list

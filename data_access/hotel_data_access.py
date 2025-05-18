@@ -69,3 +69,19 @@ class HotelDataAccess(BaseDataAccess):
             hotels.append(hotel)
 
         return hotels
+
+    def read_hotel_by_name(self, name: str) -> Hotel | None:
+        sql = """
+        SELECT h.hotel_id, h.name, h.stars, h.address_id
+        FROM Hotel h
+        WHERE LOWER(h.name) = LOWER(?)
+        """
+        row = self.fetchone(sql, (name,))
+
+        if row:
+            hotel_id, name, stars, address_id = row
+            address = self.__address_da.read_address_by_id(address_id)
+            hotel = Hotel(hotel_id, name, stars, address)
+            self.__load_hotel_rooms(hotel)
+            return hotel
+        return None

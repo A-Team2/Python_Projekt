@@ -57,3 +57,11 @@ class HotelManager:
                     break  # Nur ein freies Zimmer reicht
 
         return matching_hotels
+
+    def get_hotel_by_name(self, name: str) -> Hotel | None:
+        """
+        Gibt ein Hotel anhand seines Namens zurück.
+        """
+        if not name or not isinstance(name, str):
+            raise ValueError("Name must be a non-empty string.")
+        return self.__hotel_da.read_hotel_by_name(name.strip())

@@ -78,6 +78,19 @@ class Room:
     def hotel(self) -> Hotel:
         return self.__hotel
 
+    @hotel.setter
+    def hotel(self, hotel: Hotel) -> None:
+        if hotel is None or not isinstance(hotel, Hotel):
+            raise ValueError("hotel must be a Hotel instance")
+        # Entferne alte Relation.
+        if self.__hotel is not hotel:
+            if self.__hotel is not None:
+                self.__hotel.remove_room(self)
+            self.__hotel = hotel
+            # Füge neue Relation hinzu, falls das Hotel nicht None ist und das Zimmer noch nicht enthalten ist
+            if hotel is not None and self not in hotel.rooms:
+                 hotel.add_room(self)
+
     @property
     def room_type(self) -> RoomType:
         return self.__room_type
