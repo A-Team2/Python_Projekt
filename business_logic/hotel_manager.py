@@ -58,6 +58,40 @@ class HotelManager:
 
         return matching_hotels
 
+    def get_hotels_by_all_criteria(
+        self,
+        city: str,
+        min_stars: int,
+        guest_count: int,
+        check_in_date: date,
+        check_out_date: date
+    ) -> list[Hotel]:
+        """
+        Gibt Hotels zurück, die alle angegebenen Kriterien erfüllen.
+        """
+        # Eingabevalidierung
+        if not city or not isinstance(city, str):
+            raise ValueError("City must be a non-empty string.")
+        if not isinstance(min_stars, int) or min_stars < 1 or min_stars > 5:
+            raise ValueError("Min_stars must be an integer between 1 and 5.")
+        if not isinstance(guest_count, int) or guest_count < 1:
+            raise ValueError("Guest_count must be a positive integer.")
+        if not isinstance(check_in_date, date):
+            raise ValueError("Check_in_date must be a date object.")
+        if not isinstance(check_out_date, date):
+            raise ValueError("Check_out_date must be a date object.")
+        if check_out_date <= check_in_date:
+            raise ValueError("Check_out_date must be after Check_in_date.")
+
+        # Delegation an den Data Access Layer
+        return self.__hotel_da.read_hotels_by_all_criteria(
+            city.strip(),
+            min_stars,
+            guest_count,
+            check_in_date,
+            check_out_date
+        )
+
     def get_hotel_by_name(self, name: str) -> Hotel | None:
         """
         Gibt ein Hotel anhand seines Namens zurück.
