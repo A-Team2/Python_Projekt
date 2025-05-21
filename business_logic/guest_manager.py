@@ -23,7 +23,8 @@ class GuestManager:
         self,
         first_name: str,
         last_name: str,
-        email: str
+        email: str,
+        address: 'Address'
     ) -> Guest:
         # Validierung der Eingaben
         if not first_name or not isinstance(first_name, str):
@@ -32,16 +33,18 @@ class GuestManager:
             raise ValueError("last_name must be a non-empty string")
         if not email or not isinstance(email, str):
             raise ValueError("email must be a non-empty string")
+        if address is None or not hasattr(address, 'address_id'):
+            raise ValueError("address must be a valid Address object")
         # Insert in DB, liefert neue guest_id
         new_id = self.__guest_da.insert_guest(
             first_name = first_name,
             last_name  = last_name,
-            email      = email
+            email      = email,
+            address_id = address.address_id
         )
         # Sofort frisch laden und zurückgeben
         guest = self.__guest_da.read_guest_by_id(new_id)
         if guest is None:
-            # sollte nicht passieren, aber zur Sicherheit
             raise RuntimeError(f"Could not load guest with id {new_id}")
         return guest
 

@@ -2,37 +2,70 @@ from ui import input_helper
 from business_logic.guest_manager   import GuestManager
 from business_logic.hotel_manager   import HotelManager
 from business_logic.booking_manager import BookingManager
+from data_access.address_data_access import AddressDataAccess
+from model.address import Address
 from datetime import datetime
+import re
 
 def run(hotel_manager: HotelManager):
     # Manager-Instanzen initialisieren
     gm = GuestManager()
     hm = hotel_manager
     bm = BookingManager()
+    address_da = AddressDataAccess()
+
+    # E-Mail validieren
+    def valid_email(email):
+        return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email)
+
+    # Straße validieren (mind. ein Leerzeichen und am Ende eine Zahl)
+    def valid_street(street):
+        return re.match(r"^.+ \d+[a-zA-Z]?$", street)
 
     # 1) Gast per E-Mail suchen oder neu anlegen
-    email = input_helper.input_valid_string("Ihre E-Mail: ", min_length=5)
+    while True:
+        email = input_helper.input_valid_string("Ihre E-Mail: ", min_length=5)
+        if not valid_email(email):
+            print("Bitte geben Sie eine gültige E-Mail-Adresse ein!")
+            continue
+        break
     guest = gm.read_guest_by_email(email)
     if guest is None:
-        print("Neu bei uns? Bitte geben Sie Ihren Namen ein.")
+        print("Neu bei uns? Bitte geben Sie Ihren Namen und Ihre Adresse ein.")
         first = input_helper.input_valid_string("Vorname: ", min_length=1)
         last  = input_helper.input_valid_string("Nachname: ", min_length=1)
-        guest = gm.create_guest(first, last, email)
-        print(f"👍 Gast angelegt: {guest}")
+        while True:
+            street = input_helper.input_valid_string("Straße (mit Hausnummer): ", min_length=2)
+            if not valid_street(street):
+                print("Bitte geben Sie Straße und Hausnummer an (z.B. 'Musterstrasse 5')!")
+                continue
+            break
+        city = input_helper.input_valid_string("Stadt: ", min_length=2)
+        zip_code = input_helper.input_valid_string("PLZ: ", min_length=2)
+        # Adresse anlegen und erst dann Address-Objekt mit echter ID erzeugen
+        address_id = address_da.create_address(Address(0, street, city, zip_code))
+        address = Address(address_id, street, city, zip_code)
+        guest = gm.create_guest(first, last, email, address)
+        print(f"👍 Gast erfolgreich angelegt: {first} {last} ({email})")
     else:
         print(f"👋 Willkommen zurück, {guest.first_name}!")
 
     # 2) Stadt abfragen und Hotel auswählen
-    city   = input_helper.input_valid_string("Stadt: ", min_length=2)
-    hotels = hm.get_hotels_by_city(city)
-    print(f"\nHotels in {city}:")
-    for i, h in enumerate(hotels, start=1):
-        print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
-    idx   = input_helper.input_valid_int(
-        "Wählen Sie ein Hotel (Nummer): ",
-        min_value=1, max_value=len(hotels)
-    )
-    hotel = hotels[idx-1]
+    while True:
+        city = input_helper.input_valid_string("In welcher Stadt möchten Sie ein Hotel buchen? ", min_length=2)
+        hotels = hm.get_hotels_by_city(city)
+        if not hotels:
+            print(f"In {city} sind derzeit keine Hotels verfügbar. Bitte geben Sie eine andere Stadt ein.")
+            continue
+        print(f"\nHotels in {city}:")
+        for i, h in enumerate(hotels, start=1):
+            print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
+        idx = input_helper.input_valid_int(
+            "Wählen Sie ein Hotel (Nummer): ",
+            min_value=1, max_value=len(hotels)
+        )
+        hotel = hotels[idx-1]
+        break
 
     # 3) Zimmer im gewählten Hotel auflisten und auswählen
     rooms = hotel.rooms
@@ -52,5 +85,8 @@ def run(hotel_manager: HotelManager):
     check_out = datetime.strptime(co_str, "%Y-%m-%d").date()
 
     # 5) Buchung anlegen
+    if not hasattr(guest, 'first_name') or not hasattr(guest, 'address'):
+        print("Fehler: Es gab ein Problem mit den Gastdaten. Bitte versuchen Sie es erneut.")
+        return
     booking = bm.create_booking(guest, room, check_in, check_out)
     print(f"\n🎉 Buchung erfolgreich: {booking}")

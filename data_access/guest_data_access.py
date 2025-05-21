@@ -62,17 +62,16 @@ class GuestDataAccess(BaseDataAccess):
         *,
         first_name: str,
         last_name: str,
-        email: str
+        email: str,
+        address_id: int
     ) -> int:
         """
-        Legt einen neuen Gast an. 
-        Wir verwenden hier standardmäßig address_id = 1 (z.B. Platzhalter-Adresse).
+        Legt einen neuen Gast an.
         """
         sql = """
         INSERT INTO guest (first_name, last_name, email, address_id)
         VALUES (?, ?, ?, ?)
         """
-        # hier nehmen wir einfach address_id = 1; du kannst das natürlich später dynamisch abfragen
-        params = (first_name, last_name, email, 1)
+        params = (first_name, last_name, email, address_id)
         last_id, _ = self.execute(sql, params)
         return last_id
