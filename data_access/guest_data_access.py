@@ -39,3 +39,40 @@ class GuestDataAccess(BaseDataAccess):
             if address:
                 guests.append(Guest(guest_id, first_name, last_name, email, address))
         return guests
+    
+    def read_guest_by_email(self, email: str) -> Guest | None:
+        sql = """
+        SELECT guest_id, first_name, last_name, email, address_id
+        FROM guest
+        WHERE email = ?
+        """
+        row = self.fetchone(sql, (email,))
+        if not row:
+            return None
+
+        guest_id, first_name, last_name, email, address_id = row
+        address = AddressDataAccess().read_address_by_id(address_id)
+        if address is None:
+            return None
+
+        return Guest(guest_id, first_name, last_name, email, address)
+    
+    def insert_guest(
+        self,
+        *,
+        first_name: str,
+        last_name: str,
+        email: str
+    ) -> int:
+        """
+        Legt einen neuen Gast an. 
+        Wir verwenden hier standardmäßig address_id = 1 (z.B. Platzhalter-Adresse).
+        """
+        sql = """
+        INSERT INTO guest (first_name, last_name, email, address_id)
+        VALUES (?, ?, ?, ?)
+        """
+        # hier nehmen wir einfach address_id = 1; du kannst das natürlich später dynamisch abfragen
+        params = (first_name, last_name, email, 1)
+        last_id, _ = self.execute(sql, params)
+        return last_id

@@ -150,3 +150,13 @@ class Room:
             if (check_in <= booking.check_out_date and check_out >= booking.check_in_date):
                 return False
         return True
+    
+    @property
+    def room_no(self) -> int:
+        """Return the human-readable room number."""
+        return self.__room_number
+
+    @property
+    def price_per_night(self) -> float:
+        """Return the nightly rate."""
+        return self.__price_per_night

@@ -99,3 +99,12 @@ class HotelManager:
         if not name or not isinstance(name, str):
             raise ValueError("Name must be a non-empty string.")
         return self.__hotel_da.read_hotel_by_name(name.strip())
+    
+    def read_hotel_by_id(self, hotel_id: int) -> Hotel | None:
+        #Gibt ein Hotel anhand seiner Datenbank-ID zurück.
+        
+        # Eingabevalidierung
+        if not isinstance(hotel_id, int) or hotel_id < 1:
+            raise ValueError("hotel_id must be a positive integer.")
+        # Delegation an den Data‐Access‐Layer
+        return self.__hotel_da.read_hotel_by_id(hotel_id)

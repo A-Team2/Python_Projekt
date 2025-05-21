@@ -3,6 +3,7 @@ from model.booking import Booking
 from model.guest import Guest
 from model.address import Address
 from data_access.guest_data_access import GuestDataAccess
+from datetime import date
 
 class BookingDataAccess(BaseDataAccess):
     def create_booking(self, booking: Booking) -> int:
@@ -54,3 +55,22 @@ class BookingDataAccess(BaseDataAccess):
             booking = Booking(booking_id, check_in_date, check_out_date, guest, [], float(total_amount), bool(is_cancelled))
             bookings.append(booking)
         return bookings
+    
+    def insert_booking(
+        self,
+        *,
+        guest_id: int,
+        room_id: int,
+        check_in_date: date,
+        check_out_date: date
+    ) -> int:
+        sql = """
+        INSERT INTO booking (guest_id, room_id, check_in_date, check_out_date, total_amount, is_cancelled)
+        VALUES (?, ?, ?, ?, 0.0, 0)
+        """
+        # wir setzen total_amount=0.0 und is_cancelled=0 als Default
+        last_id, _ = self.execute(
+            sql,
+            (guest_id, room_id, check_in_date.isoformat(), check_out_date.isoformat())
+        )
+        return last_id
