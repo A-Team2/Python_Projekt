@@ -4,6 +4,7 @@ from business_logic.hotel_manager   import HotelManager
 from business_logic.booking_manager import BookingManager
 from data_access.address_data_access import AddressDataAccess
 from model.address import Address
+from model.guest import Guest
 from datetime import datetime
 import re
 
@@ -50,6 +51,11 @@ def run(hotel_manager: HotelManager):
     else:
         print(f"👋 Willkommen zurück, {guest.first_name}!")
 
+    # Stelle sicher, dass guest ein echtes Guest-Objekt ist
+    if not isinstance(guest, Guest):
+        print("Fehler: Die Gastdaten konnten nicht korrekt geladen werden. Bitte versuchen Sie es erneut.")
+        return
+
     # 2) Stadt abfragen und Hotel auswählen
     while True:
         city = input_helper.input_valid_string("In welcher Stadt möchten Sie ein Hotel buchen? ", min_length=2)
@@ -85,8 +91,9 @@ def run(hotel_manager: HotelManager):
     check_out = datetime.strptime(co_str, "%Y-%m-%d").date()
 
     # 5) Buchung anlegen
-    if not hasattr(guest, 'first_name') or not hasattr(guest, 'address'):
-        print("Fehler: Es gab ein Problem mit den Gastdaten. Bitte versuchen Sie es erneut.")
-        return
     booking = bm.create_booking(guest, room, check_in, check_out)
-    print(f"\n🎉 Buchung erfolgreich: {booking}")
+    print(f"\n🎉 Buchung erfolgreich!\n" \
+          f"Hotel: {hotel.name}\n" \
+          f"Zimmer: {room.room_number}\n" \
+          f"Zeitraum: {check_in} bis {check_out}\n" \
+          f"Gast: {guest.first_name} {guest.last_name} ({guest.email})\n")

@@ -30,7 +30,10 @@ class BookingDataAccess(BaseDataAccess):
         """
         row = self.fetchone(sql, (booking_id,))
         if row:
-            return Booking(*row)
+            booking_id, check_in_date, check_out_date, is_cancelled, total_amount, guest_id, room_id = row
+            guest = GuestDataAccess().read_guest_by_id(guest_id)
+            # rooms = ... (hier leer, da Einzelbuchung)
+            return Booking(booking_id, check_in_date, check_out_date, guest, [], float(total_amount), bool(is_cancelled))
         return None
 
     def cancel_booking(self, booking_id: int) -> bool:
