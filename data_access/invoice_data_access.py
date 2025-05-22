@@ -21,3 +21,19 @@ class InvoiceDataAccess(BaseDataAccess):
         if row:
             return Invoice(*row)
         return None
+    
+    def insert_invoice(
+        self,
+        booking_id: int,
+        issue_date,          # datetime.date
+        total_amount: float
+    ) -> int:
+        # 1) Legt einen neuen Invoice-Datensatz an
+        sql = """
+        INSERT INTO invoice (issue_date, total_amount, booking_booking_id)
+        VALUES (?, ?, ?)
+        """
+        params = (issue_date.isoformat(), total_amount, booking_id)
+        last_id, _ = self.execute(sql, params)
+        return last_id
+
