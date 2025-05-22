@@ -125,3 +125,50 @@ class HotelDataAccess(BaseDataAccess):
             self.__load_hotel_rooms(hotel)
             return hotel
         return None
+
+    def insert_hotel(self, name: str, stars: int, address_id: int) -> int:
+        sql = """
+        INSERT INTO Hotel (name, stars, address_id)
+        VALUES (?, ?, ?)
+        """
+        params = (name, stars, address_id)
+        last_id, _ = self.execute(sql, params)
+        return int(last_id)
+
+    def read_hotel_by_id(self, hotel_id: int) -> Hotel | None:
+        sql = """
+        SELECT hotel_id, name, stars, address_id
+        FROM Hotel
+        WHERE hotel_id = ?
+        """
+        row = self.fetchone(sql, (hotel_id,))
+        if row:
+            hotel_id, name, stars, address_id = row
+            address = self.__address_da.read_address_by_id(address_id)
+            hotel = Hotel(hotel_id, name, stars, address)
+            self.__load_hotel_rooms(hotel)
+            return hotel
+        return None
+
+    def delete_hotel(self, hotel_id: int) -> None:
+        # Zuerst alle Rooms und deren Facilities löschen (wegen Foreign Keys)
+        room_da = RoomDataAccess()
+        rooms = room_da.read_rooms_by_hotel_id(hotel_id)
+        for room in rooms:
+            room_da.delete_room(room.room_id)
+        # Dann das Hotel selbst löschen
+        sql = "DELETE FROM Hotel WHERE hotel_id = ?"
+        self.execute(sql, (hotel_id,))
+
+    def update_hotel(self, hotel_id: int, name: str, stars: int, address) -> None:
+        # Adresse aktualisieren
+        sql_addr = """
+        UPDATE Address SET street = ?, city = ?, zip_code = ?
+        WHERE address_id = ?
+        """
+        self.execute(sql_addr, (address.street, address.city, address.zip_code, address.address_id))
+        # Hotel aktualisieren
+        sql_hotel = """
+        UPDATE Hotel SET name = ?, stars = ? WHERE hotel_id = ?
+        """
+        self.execute(sql_hotel, (name, stars, hotel_id))
