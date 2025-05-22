@@ -90,7 +90,7 @@ def run(hotel_manager: HotelManager):
     check_in  = datetime.strptime(ci_str, "%Y-%m-%d").date()
     check_out = datetime.strptime(co_str, "%Y-%m-%d").date()
 
-    # 5) Buchung anlegen
+    # 6) Buchung anlegen
     booking = bm.create_booking(guest, room, check_in, check_out)
     print(f"\n🎉 Buchung erfolgreich!\n" \
           f"Hotel: {hotel.name}\n" \
