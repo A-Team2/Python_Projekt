@@ -8,14 +8,22 @@ def run(hotel_manager):
     hotel = None
     cancel = False
 
-    # 1. Hotel auswählen
+    # 1. Stadt abfragen und Hotel auswählen
     while not hotel and not cancel:
         try:
-            hotel_name = input_helper.input_valid_string("Hotelname eingeben: ", min_length=2, normalize_func=lambda s: s.strip().capitalize())
-            hotel = hotel_manager.get_hotel_by_name(hotel_name)
-            if not hotel:
-                print(f"Hotel '{hotel_name}' nicht gefunden.")
-                hotel = None
+            city = input_helper.input_valid_string("In welcher Stadt möchten Sie ein Hotel auswählen? ", min_length=2)
+            hotels = hotel_manager.get_hotels_by_city(city)
+            if not hotels:
+                print(f"In {city} sind derzeit keine Hotels verfügbar. Bitte geben Sie eine andere Stadt ein.")
+                continue
+            print(f"\nHotels in {city}:")
+            for i, h in enumerate(hotels, start=1):
+                print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
+            idx = input_helper.input_valid_int(
+                "Wählen Sie ein Hotel (Nummer): ",
+                min_value=1, max_value=len(hotels)
+            )
+            hotel = hotels[idx-1]
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
