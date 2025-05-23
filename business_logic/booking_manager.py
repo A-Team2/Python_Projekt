@@ -34,3 +34,16 @@ class BookingManager:
         if booking is None:
             raise RuntimeError(f"Neue Buchung #{new_id} konnte nicht geladen werden.")
         return booking
+    
+    def get_bookings_for_guest(self, guest) -> list[Booking]:
+        # 1) Validierung
+        from model.guest import Guest
+        if guest is None or not isinstance(guest, Guest):
+            raise ValueError("guest is required and must be a Guest instance")
+        # 2) DB‐Rows abholen
+        rows = self.__booking_da.read_bookings_by_guest_id(guest.guest_id)
+        # 3) in Booking‐Objekte wandeln
+        bookings: list[Booking] = []
+        for row in rows:
+            bookings.append(Booking(*row))
+        return bookings

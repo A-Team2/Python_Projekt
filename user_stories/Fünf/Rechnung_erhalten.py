@@ -1,56 +1,74 @@
-from ui import input_helper
+import ui.input_helper as input_helper
 from business_logic.guest_manager   import GuestManager
-from business_logic.hotel_manager   import HotelManager
 from business_logic.booking_manager import BookingManager
-from datetime import datetime
+from business_logic.invoice_manager import InvoiceManager
+from datetime import date
 
-def run(hotel_manager: HotelManager):
-    # Manager-Instanzen initialisieren
+def run(hotel_manager=None):
     gm = GuestManager()
-    hm = hotel_manager
     bm = BookingManager()
+    im = InvoiceManager()
 
-    # 1) Gast per E-Mail suchen oder neu anlegen
-    email = input_helper.input_valid_string("Ihre E-Mail: ", min_length=5)
+    # 1) E-Mail abfragen
+    cancel = False
+    email = None
+    while not email and not cancel:
+        try:
+            # hier mit input_helper.input_valid_string aufrufen
+            email = input_helper.input_valid_string("E-Mail für Rechnung: ", min_length=5)
+        except input_helper.EmptyInputError:
+            cancel = True
+        except ValueError as err:
+            print("Fehler:", err)
+
+    if cancel:
+        print("Vorgang abgebrochen.")
+        return
+
+    # 2) Gast laden
     guest = gm.read_guest_by_email(email)
     if guest is None:
-        print("Neu bei uns? Bitte geben Sie Ihren Namen ein.")
-        first = input_helper.input_valid_string("Vorname: ", min_length=1)
-        last  = input_helper.input_valid_string("Nachname: ", min_length=1)
-        guest = gm.create_guest(first, last, email)
-        print(f"👍 Gast angelegt: {guest}")
-    else:
-        print(f"👋 Willkommen zurück, {guest.first_name}!")
+        print("Unbekannte E-Mail.")
+        return
 
-    # 2) Stadt abfragen und Hotel auswählen
-    city   = input_helper.input_valid_string("Stadt: ", min_length=2)
-    hotels = hm.get_hotels_by_city(city)
-    print(f"\nHotels in {city}:")
-    for i, h in enumerate(hotels, start=1):
-        print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
-    idx   = input_helper.input_valid_int(
-        "Wählen Sie ein Hotel (Nummer): ",
-        min_value=1, max_value=len(hotels)
-    )
-    hotel = hotels[idx-1]
+    # 3) Buchungen holen (nur abgeschlossene)
+    all_bookings = bm.get_bookings_for_guest(guest)
+    completed   = [b for b in all_bookings if b.check_out_date < date.today()]
 
-    # 3) Zimmer im gewählten Hotel auflisten und auswählen
-    rooms = hotel.rooms
-    print(f"\nZimmer im Hotel «{hotel.name}»:")
-    for i, r in enumerate(rooms, start=1):
-        print(f" {i}. Zimmer {r.room_number} — {r.price_per_night:.2f} CHF/Nacht")
-    idx  = input_helper.input_valid_int(
-        "Wählen Sie ein Zimmer (Nummer): ",
-        min_value=1, max_value=len(rooms)
-    )
-    room = rooms[idx-1]
+    if not completed:
+        print("Sie haben derzeit keine abgeschlossenen Aufenthalte, die abgerechnet werden können.")
+        return
 
-    # 4) Check-in und Check-out eingeben
-    ci_str = input_helper.input_valid_string("Check-in (YYYY-MM-DD): ",  min_length=10, max_length=10)
-    co_str = input_helper.input_valid_string("Check-out (YYYY-MM-DD): ", min_length=10, max_length=10)
-    check_in  = datetime.strptime(ci_str, "%Y-%m-%d").date()
-    check_out = datetime.strptime(co_str, "%Y-%m-%d").date()
+    # 4) Nummerierte Liste anzeigen
+    print(f"\nAbgeschlossene Aufenthalte für {guest.first_name} {guest.last_name}:")
+    for i, b in enumerate(completed, start=1):
+        print(f" {i}. {b.check_in_date} – {b.check_out_date}, Betrag: {b.total_amount:.2f} CHF")
 
-    # 6) Buchung anlegen
-    booking = bm.create_booking(guest, room, check_in, check_out)
-    print(f"\n🎉 Buchung erfolgreich: {booking}")
+    # 5) Auswahl abfragen
+    idx = None
+    cancel = False
+    while idx is None and not cancel:
+        try:
+            # hier mit input_helper.input_valid_int aufrufen
+            idx = input_helper.input_valid_int(
+                f"Wählen Sie eine Buchung (1–{len(completed)}): ",
+                min_value=1,
+                max_value=len(completed)
+            )
+        except input_helper.EmptyInputError:
+            cancel = True
+        except ValueError as err:
+            print("Fehler:", err)
+
+    if cancel:
+        print("Vorgang abgebrochen.")
+        return
+
+    booking = completed[idx-1]
+
+    # 6) Rechnung erzeugen und anzeigen
+    invoice = im.generate_invoice(booking)
+    print(f"\nRechnung #{invoice.invoice_id}")
+    print(f" Buchung: {invoice.booking.booking_id}")
+    print(f" Ausstellungsdatum: {invoice.issue_date}")
+    print(f" Gesamtbetrag: {invoice.total_amount:.2f} CHF\n")

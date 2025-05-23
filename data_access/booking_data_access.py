@@ -77,3 +77,21 @@ class BookingDataAccess(BaseDataAccess):
             (guest_id, room_id, check_in_date.isoformat(), check_out_date.isoformat())
         )
         return last_id
+    
+    def read_bookings_by_guest_id(self, guest_id: int) -> list[tuple]:
+        """
+        Liefert alle Buchungs‐Zeilen für einen Gast.
+        """
+        sql = """
+        SELECT booking_id,
+               check_in_date,
+               check_out_date,
+               is_cancelled,
+               total_amount,
+               guest_id,
+               room_id
+          FROM booking
+         WHERE guest_id = ?
+        ORDER BY check_in_date
+        """
+        return self.fetchall(sql, (guest_id,))
