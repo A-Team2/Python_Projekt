@@ -47,3 +47,18 @@ class BookingManager:
         for row in rows:
             bookings.append(Booking(*row))
         return bookings
+    
+    def read_booking(self, booking_id: int) -> Booking | None:
+        return self.__booking_da.read_booking_by_id(booking_id)
+
+    def cancel_booking(self, booking_id: int) -> None:
+        if not isinstance(booking_id, int) or booking_id < 1:
+            raise ValueError("booking_id must be a positive integer")
+        # Prüfungen, ob die Buchung existiert
+        booking = self.read_booking(booking_id)
+        if booking is None:
+            raise ValueError(f"No booking with id {booking_id}")
+        # 1) DB-Flag setzen
+        self.__booking_da.cancel_booking(booking_id)
+        # 2) Objekt ebenfalls updaten
+        booking.is_cancelled = True

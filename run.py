@@ -36,6 +36,7 @@ def show_menu():
     print("11. Hotel aktualisieren (US 3.3)")
     print("12. Zimmer buchen (US 4)")
     print("13. Rechnung erhalten (US 5)")
+    print("14. Buchung stornieren (US 6)")
     print("0. Beenden")
     print("================================")
 
@@ -92,6 +93,10 @@ def run_user_story(choice):
         print("\n🧾 Rechnung nach Aufenthalt erstellen (US 5)")
         from user_stories.Fünf.Rechnung_erhalten import run
         run(hotel_manager)
+    elif choice == 14:
+        print("\n🗑️ Buchung stornieren (US 6)")
+        from user_stories.Sechs.Buchung_stornieren import run
+        run()
     else:
         print("Ungültige Auswahl!")
         
@@ -99,7 +104,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-13): ", min_value=0, max_value=13)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-14): ", min_value=0, max_value=14)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break

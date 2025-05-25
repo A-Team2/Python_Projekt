@@ -36,4 +36,16 @@ class InvoiceDataAccess(BaseDataAccess):
         params = (issue_date.isoformat(), total_amount, booking_id)
         last_id, _ = self.execute(sql, params)
         return last_id
+    
+    def read_invoice_by_id(self, invoice_id: int) -> Invoice | None:
+        sql = """
+        SELECT invoice_id, booking_id, issue_date, total_amount
+          FROM invoice
+         WHERE invoice_id = ?
+        """
+        row = self.fetchone(sql, (invoice_id,))
+        if not row:
+            return None
+        return Invoice(*row)
+    
 
