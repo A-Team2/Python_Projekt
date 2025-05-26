@@ -12,7 +12,7 @@ class Invoice:
         issue_date: date,
         total_amount: float
     ):
-        # Validation
+        # Validierung
         if booking is None or not hasattr(booking, "booking_id"):
             raise ValueError("invoice must be created with a valid Booking")
         if not isinstance(issue_date, date):
@@ -20,7 +20,7 @@ class Invoice:
         if total_amount is None or not isinstance(total_amount, float):
             raise ValueError("total_amount is required and must be float")
 
-        # private attributes
+        # private Attribute
         self.__booking: Booking   = booking
         self.__issue_date: date   = issue_date
         self.__total_amount: float = total_amount
@@ -33,7 +33,7 @@ class Invoice:
 
     @property
     def booking(self) -> Booking:
-        # The Booking this Invoice belongs to.
+        # Die Buchung, zu der diese Rechnung gehört.
         return self.__booking
 
     @property
@@ -57,7 +57,7 @@ class Invoice:
         self.__total_amount = new_total_amount
 
     def get_invoice_details(self) -> str:
-        # Return a one-line summary of the invoice.
+        # Gibt eine einzeilige Zusammenfassung der Rechnung zurück.
         return (
             f"Invoice for Booking {self.__booking.booking_id}: "
             f"Date {self.__issue_date}, Amount {self.__total_amount:.2f} CHF"

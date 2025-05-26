@@ -18,7 +18,7 @@ class Booking:
         total_amount: float = 0.0,
         is_cancelled: bool = False
     ):
-        # Validation
+        # Validierung
         if booking_id is None or not isinstance(booking_id, int):
             raise ValueError("booking_id is required and must be int")
         if not isinstance(check_in_date, date):
@@ -34,23 +34,23 @@ class Booking:
         if not isinstance(is_cancelled, bool):
             raise ValueError("is_cancelled must be boolean")
 
-        # private attributes
+        # private Attribute
         self.__booking_id     = booking_id
         self.__check_in_date  = check_in_date
         self.__check_out_date = check_out_date
         self.__is_cancelled   = is_cancelled
         self.__total_amount   = total_amount
 
-        # Association: register with Guest
+        # Assoziation: beim Gast registrieren.
         self.__guest = guest
         guest.add_booking(self)
 
-        # Association: manage rooms
+        # Assoziation: Rooms managen
         self.__rooms: list[Room] = []
         for room in rooms:
             self.add_room(room)
 
-        # Composition: create Invoice  
+        # Composition: Invoice erstellen  
         self.__invoice: Invoice = Invoice(self, issue_date=check_out_date, total_amount=total_amount)
 
     def __repr__(self) -> str:
@@ -77,9 +77,9 @@ class Booking:
         return self.__is_cancelled
 
     def cancel(self) -> None:
-        # Marks this booking as cancelled and clears its invoice.
+        # Markiert diese Buchung als storniert und entfernt die zugehörige Rechnung.
         self.__is_cancelled = True
-        # nullify invoice reference
+        # Setzt die Rechnungsreferenz auf NULL.
         self.__invoice = None
 
     @property
@@ -104,11 +104,11 @@ class Booking:
 
     @property
     def rooms(self) -> list[Room]:
-        # return copy to protect internal list
+        # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__rooms.copy()
 
     def add_room(self, room: Room) -> None:
-        # Associates a Room with this Booking.
+        # Verknüpft ein Zimmer mit dieser Buchung.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -116,7 +116,7 @@ class Booking:
             self.__rooms.append(room)
 
     def remove_room(self, room: Room) -> None:
-        # Removes the Room association; Room itself continues to exist.
+        # Entfernt die Assoziation zum Zimmer; das Zimmer selbst bleibt weiterhin bestehen.
         from model.room import Room
         if room in self.__rooms:
             self.__rooms.remove(room)
@@ -126,7 +126,7 @@ class Booking:
         return self.__invoice
 
     def get_booking_details(self) -> str:
-        # Returns a brief summary of this booking.
+        # Gibt eine kurze Zusammenfassung dieser Buchung zurück.
         status = "cancelled" if self.__is_cancelled else "active"
         return (
             f"Booking {self.__booking_id}: Guest {self.__guest}, "

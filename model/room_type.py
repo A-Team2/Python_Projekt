@@ -6,7 +6,7 @@ class RoomType:
     """
 
     def __init__(self, room_type_id: int, description: str, max_guests: int):
-        # Validation
+        # Validierung
         if room_type_id is None or not isinstance(room_type_id, int):
             raise ValueError("room_type_id is required and must be int")
         if not description or not isinstance(description, str):
@@ -14,12 +14,12 @@ class RoomType:
         if max_guests is None or not isinstance(max_guests, int):
             raise ValueError("max_guests is required and must be int")
 
-        # private attributes
+        # private Attribute
         self.__room_type_id: int = room_type_id
         self.__description: str  = description
         self.__max_guests: int   = max_guests
 
-        # bidirectional association to Rooms
+        # Bidirektionale Assoziation zu Zimmern.
         self.__rooms: list[Room] = []
 
     def __repr__(self) -> str:
@@ -54,11 +54,11 @@ class RoomType:
 
     @property
     def rooms(self) -> list[Room]:
-        # Return a copy to protect the internal list
+        # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__rooms.copy()
 
     def add_room(self, room: Room) -> None:
-        # Adds a Room to this RoomType and sets the back-reference on the Room.
+        # Fügt diesem Zimmertyp ein Zimmer hinzu und setzt im Zimmer die Rückreferenz auf diesen Zimmertyp.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -67,12 +67,12 @@ class RoomType:
             room.room_type = self
 
     def remove_room(self, room: Room) -> None:
-        # Removes a Room from this RoomType and clears the back-reference on the Room.
+        # Entfernt ein Zimmer aus diesem Zimmertyp und entfernt im Zimmer die Rückreferenz auf diesen Zimmertyp.
         from model.room import Room
         if room in self.__rooms:
             self.__rooms.remove(room)
             room.room_type = None
 
     def get_room_type_info(self) -> str:
-        # Returns a brief description of this RoomType.
+        # Gibt eine kurze Beschreibung dieses Zimmertyps zurück.
         return f"{self.__description}, max guests: {self.__max_guests}"

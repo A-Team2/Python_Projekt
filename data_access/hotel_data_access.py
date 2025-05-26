@@ -11,7 +11,7 @@ class HotelDataAccess(BaseDataAccess):
         self.__room_da = RoomDataAccess()
 
     def __load_hotel_rooms(self, hotel: Hotel) -> None:
-        """Lädt alle Zimmer für ein Hotel."""
+        # Lädt alle Zimmer für ein Hotel.
         rooms = self.__room_da.read_rooms_by_hotel_id(hotel.hotel_id, hotel)
         for room in rooms:
             hotel.add_room(room)

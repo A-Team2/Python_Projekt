@@ -2,10 +2,10 @@ from __future__ import annotations
 
 class Address:
     """
-    Model Class Address
+    #Model Class Address
     """
     def __init__(self, address_id: int, street: str, city: str, zip_code: str):
-        # Ensure values for not nullable attributes or not the right type
+        # Stellt sicher, dass für nicht NULL erlaubte Attribute Werte vorhanden sind und diese den korrekten Datentyp haben.
         if address_id is None or not isinstance(address_id, int):
             raise ValueError("address_id is required and must be int")
         if not street or not isinstance(street, str):
@@ -15,7 +15,7 @@ class Address:
         if not zip_code or not isinstance(zip_code, str):
             raise ValueError("zip_code is required and must be str")
 
-        # private Attributes
+        # Private Attribute
         self.__address_id: int = address_id
         self.__street: str    = street
         self.__city: str      = city
@@ -62,5 +62,5 @@ class Address:
         self.__zip_code = zip_code
 
     def get_full_address(self) -> str:
-        # Returns a formatted address.
+        # Gibt eine formatierte Adresse zurück.
         return f"{self.__street}, {self.__zip_code} {self.__city}"

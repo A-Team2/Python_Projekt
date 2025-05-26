@@ -14,7 +14,7 @@ class Guest:
         email: str,
         address: Address
     ):
-        # Validation
+        # Validierung
         if guest_id is None or not isinstance(guest_id, int):
             raise ValueError("guest_id is required and must be int")
         if not first_name or not isinstance(first_name, str):
@@ -26,14 +26,14 @@ class Guest:
         if address is None or not isinstance(address, Address):
             raise ValueError("address is required and must be Address")
 
-        # private attributes
+        # private Attribute
         self.__guest_id: int     = guest_id
         self.__first_name: str   = first_name
         self.__last_name: str    = last_name
         self.__email: str        = email
         self.__address: Address  = address
 
-        # Association: Guest keeps a list of its Bookings (bookings live independently)
+        # Assoziation: Der Gast führt eine Liste seiner Buchungen (die Buchungen existieren eigenständig weiter).
         self.__bookings: list[Booking] = []
 
     def __repr__(self) -> str:
@@ -83,11 +83,11 @@ class Guest:
 
     @property
     def bookings(self) -> list[Booking]:
-        # Return a copy to protect the internal list
+        # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__bookings.copy()
 
     def add_booking(self, booking: Booking) -> None:
-        # Associates this Guest with a Booking. Bookings exist independently.
+        # Verknüpft diesen Gast mit einer Buchung; die Buchungen existieren unabhängig weiter.
         from model.booking import Booking
         if not isinstance(booking, Booking):
             raise ValueError("booking must be a Booking instance")
@@ -96,13 +96,13 @@ class Guest:
             booking.guest = self
 
     def remove_booking(self, booking: Booking) -> None:
-        # Removes the association between this Guest and a Booking.
-        #The Booking object itself continues to exist.
+        # Entfernt die Verknüpfung zwischen diesem Gast und einer Buchung.
+        # Das Booking-Objekt selbst bleibt weiterhin bestehen.
         from model.booking import Booking
         if booking in self.__bookings:
             self.__bookings.remove(booking)
             booking.guest = None
 
     def get_guest_info(self) -> str:
-        # Returns the guest's full name and email.
+        # Gibt den vollständigen Namen und die E-Mail des Gasts zurück.
         return f"{self.__first_name} {self.__last_name} <{self.__email}>"

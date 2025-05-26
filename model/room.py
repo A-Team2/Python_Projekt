@@ -18,7 +18,7 @@ class Room:
         hotel: Hotel,
         room_type: RoomType
     ):
-        # Validation
+        # Validierung
         if room_id is None or not isinstance(room_id, int):
             raise ValueError("room_id is required and must be int")
         if room_number is None or not isinstance(room_number, int):
@@ -30,17 +30,17 @@ class Room:
         if room_type is None or not isinstance(room_type, RoomType):
             raise ValueError("room_type is required and must be RoomType")
 
-        # private Attributes
+        # private Attribute
         self.__room_id: int = room_id
         self.__room_number: int = room_number
         self.__price_per_night: float = price_per_night
         self.__hotel: Hotel = hotel
         self.__room_type: RoomType = room_type
 
-        # Registers the room with the hotel and establishes the hotel's reference in the room (bidirectional association).
+        # Registriert das Zimmer beim Hotel und setzt im Zimmer die Referenz auf dieses Hotel (bidirektionale Assoziation).
         self.__hotel.add_room(self)
 
-        # Initialize associations to Facilities and Bookings.
+        # Initialisiert die Verknüpfungen zu Einrichtungen und Buchungen.
         self.__facilities: list[Facilities] = []
         self.__bookings: list[Booking] = []
 
@@ -87,7 +87,7 @@ class Room:
             if self.__hotel is not None:
                 self.__hotel.remove_room(self)
             self.__hotel = hotel
-            # Füge neue Relation hinzu, falls das Hotel nicht None ist und das Zimmer noch nicht enthalten ist
+            # Füge neue Relation hinzu, falls das Hotel nicht None ist und das Zimmer noch nicht enthalten ist.
             if hotel is not None and self not in hotel.rooms:
                  hotel.add_room(self)
 
@@ -97,7 +97,7 @@ class Room:
 
     @property
     def facilities(self) -> list[Facilities]:
-        # Return a copy to protect the internal list.
+        # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__facilities.copy()
 
     def add_facility(self, facility: Facilities) -> None:
@@ -125,20 +125,20 @@ class Room:
             self.__bookings.remove(booking)
 
     def get_room_details(self) -> str:
-        # Returns a short description of the room.
+        # Gibt eine kurze Beschreibung des Zimmers zurück.
         return f"Zimmer {self.__room_number}, Preis: {self.__price_per_night:.2f} CHF/Nacht"
 
     def is_available(self, check_in: date, check_out: date) -> bool:
-        """
-        Prüft, ob das Zimmer im angegebenen Zeitraum verfügbar ist.
         
-        Args:
-            check_in: Anreisedatum
-            check_out: Abreisedatum
+       # Prüft, ob das Zimmer im angegebenen Zeitraum verfügbar ist.
+        
+        # Args:
+        # check_in: Anreisedatum
+        # check_out: Abreisedatum
             
-        Returns:
-            bool: True wenn das Zimmer verfügbar ist, False wenn nicht
-        """
+        #Returns:
+        #bool: True wenn das Zimmer verfügbar ist, False wenn nicht
+        
         if not isinstance(check_in, date) or not isinstance(check_out, date):
             raise ValueError("check_in und check_out müssen vom Typ date sein")
         if check_in >= check_out:
@@ -153,10 +153,10 @@ class Room:
     
     @property
     def room_no(self) -> int:
-        """Return the human-readable room number."""
+        # Gibt die für Menschen lesbare Zimmernummer zurück.
         return self.__room_number
 
     @property
     def price_per_night(self) -> float:
-        """Return the nightly rate."""
+        # Gibt den Preis pro Nacht zurück.
         return self.__price_per_night

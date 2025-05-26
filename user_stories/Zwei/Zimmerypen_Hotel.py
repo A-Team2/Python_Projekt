@@ -2,9 +2,8 @@ from ui import input_helper
 from model.hotel import Hotel
 
 def run(hotel_manager):
-    """
-    Zeigt die verfügbaren Zimmertypen eines Hotels an.
-    """
+    # Zeigt die verfügbaren Zimmertypen eines Hotels an.
+    
     hotel = None
     cancel = False
 

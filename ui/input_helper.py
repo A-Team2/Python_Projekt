@@ -2,16 +2,16 @@ import sys
 from enum import Enum
 from datetime import datetime, date
 
-# Enum for Yes/No input
+# Enum für Yes/No Input
 class YesOrNo(Enum):
     YES = 1
     NO = 0
 
-# Custom exception for empty input
+# Eigene Ausnahme für leere Eingaben.
 class EmptyInputError(ValueError):
     pass
 
-# Custom exception for values outside the allowed range
+# Eigene Ausnahme für Werte außerhalb des zulässigen Bereichs.
 class OutOfRangeError(ValueError):
     def __init__(self, value, min_value, max_value):
         super().__init__(f"Input {value} is out of range ({min_value} to {max_value}).")
@@ -19,7 +19,7 @@ class OutOfRangeError(ValueError):
         self.min_value = min_value
         self.max_value = max_value
 
-# Custom exception for string length violations
+# Eigene Ausnahme für ungültige Zeichenkettenlängen.
 class StringLengthError(ValueError):
     def __init__(self, value, min_length, max_length):
         super().__init__(f"Input '{value}' must be between {min_length} and {max_length} characters long.")
@@ -27,7 +27,7 @@ class StringLengthError(ValueError):
         self.min_length = min_length
         self.max_length = max_length
 
-# Validates string input with length constraints
+# Validiert die Zeichenketteneingabe anhand vorgegebener Längenbeschränkungen.
 def input_valid_string(prompt: str, min_length: int = 0, max_length: int = sys.maxsize, normalize_func=None) -> str:
     user_input = input(prompt).strip()
     if not (min_length <= len(user_input) <= max_length):
@@ -36,7 +36,7 @@ def input_valid_string(prompt: str, min_length: int = 0, max_length: int = sys.m
         user_input = normalize_func(user_input)
     return user_input
 
-# Validates integer input with optional default value
+# Validiert die Ganzzahl-Eingabe mit optionalem Standardwert.
 def input_valid_int(prompt: str, min_value: int = -sys.maxsize, max_value: int = sys.maxsize,
                     default: int = None) -> int:
     user_input = input(prompt).strip()
@@ -55,7 +55,7 @@ def input_valid_int(prompt: str, min_value: int = -sys.maxsize, max_value: int =
 
     return value
 
-# Validates float input with optional default value
+# VValidiert die Float-Eingaben mit optionalem Standardwert.
 def input_valid_float(prompt: str,
                       min_value: float = -float('inf'),
                       max_value: float = float('inf'),
@@ -76,7 +76,7 @@ def input_valid_float(prompt: str,
 
     return value
 
-# Handles yes/no input with optional default
+# Verarbeitet Ja-/Nein-Eingaben mit optionalem Standardwert.
 def input_y_n(prompt: str, default: YesOrNo = None) -> bool:
     y = ['y', 'yes']
     n = ['n', 'no']

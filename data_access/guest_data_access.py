@@ -65,9 +65,9 @@ class GuestDataAccess(BaseDataAccess):
         email: str,
         address_id: int
     ) -> int:
-        """
-        Legt einen neuen Gast an.
-        """
+        
+        # Legt einen neuen Gast an.
+        
         sql = """
         INSERT INTO guest (first_name, last_name, email, address_id)
         VALUES (?, ?, ?, ?)

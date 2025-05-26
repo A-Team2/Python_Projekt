@@ -19,7 +19,7 @@ def run(hotel_manager: HotelManager):
     def valid_email(email):
         return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email)
 
-    # Straße validieren (mind. ein Leerzeichen und am Ende eine Zahl)
+    # Strasse validieren (mind. ein Leerzeichen und am Ende eine Zahl)
     def valid_street(street):
         return re.match(r"^.+ \d+[a-zA-Z]?$", street)
 

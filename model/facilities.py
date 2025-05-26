@@ -6,17 +6,17 @@ class Facilities:
     """
 
     def __init__(self, facility_id: int, facility_name: str):
-        # Validation
+        # Validierung
         if facility_id is None or not isinstance(facility_id, int):
             raise ValueError("facility_id is required and must be int")
         if not facility_name or not isinstance(facility_name, str):
             raise ValueError("facility_name is required and must be str")
 
-        # private attributes
+        # private Attribute
         self.__facility_id: int    = facility_id
         self.__facility_name: str  = facility_name
 
-        # bidirectional association to Rooms
+        # Bidirektionale Assoziation zu Zimmern.
         self.__rooms: list[Room] = []
 
     def __repr__(self) -> str:
@@ -44,7 +44,7 @@ class Facilities:
         return self.__rooms.copy()
 
     def add_room(self, room: Room) -> None:
-        # Adds a Room to this Facility and sets the back-reference on the Room.
+        # Fügt dieser Einrichtung ein Zimmer hinzu und setzt im Zimmer die Rückreferenz.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -53,12 +53,12 @@ class Facilities:
             room.add_facility(self)
 
     def remove_room(self, room: Room) -> None:
-        # Removes a Room from this Facility and clears the back-reference on the Room.
+        # Entfernt ein Zimmer von dieser Einrichtung und entfernt im Zimmer die Rückreferenz.
         from model.room import Room
         if room in self.__rooms:
             self.__rooms.remove(room)
             room.remove_facility(self)
 
     def get_facility_info(self) -> str:
-        # Returns the name of this facility.
+        # Gibt den Namen dieser Einrichtung zurück.
         return self.__facility_name

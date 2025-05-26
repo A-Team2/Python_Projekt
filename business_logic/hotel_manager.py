@@ -11,22 +11,21 @@ class HotelManager:
         self.__hotel_da = data_access.HotelDataAccess()
 
     def get_hotels_by_city(self, city: str) -> list[Hotel]:
-        #Gibt alle Hotels in einer bestimmten Stadt zurück.
+        # Gibt alle Hotels in einer bestimmten Stadt zurück.
         
         if not city or not isinstance(city, str):
             raise ValueError("City must be a non-empty string.")
         return self.__hotel_da.read_hotels_by_city(city.strip())
 
     def get_hotels_by_city_and_min_stars(self, city: str, min_stars: int) -> list[Hotel]:
-        #Gibt alle Hotels in der Stadt zurück, deren Sterne >= min_stars sind.
+        # Gibt alle Hotels in der Stadt zurück, deren Sterne >= min_stars sind.
         
         hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
         return [h for h in hotels_in_city if h.stars >= min_stars]
 
     def get_hotels_by_city_and_guests(self, city: str, guests: int) -> list[Hotel]:
-        """
-        Gibt Hotels in der Stadt zurück, die mindestens ein Zimmer mit ausreichender Gästeanzahl anbieten.
-        """
+        # Gibt Hotels in der Stadt zurück, die mindestens ein Zimmer mit ausreichender Gästeanzahl anbieten.
+        
         hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
         matching_hotels = []
 
@@ -44,10 +43,8 @@ class HotelManager:
         check_in: date,
         check_out: date
     ) -> list[Hotel]:
-        """
-        Gibt alle Hotels in der Stadt zurück, die im gewünschten Zeitraum
-        mindestens ein verfügbares Zimmer haben.
-        """
+        # Gibt alle Hotels in der Stadt zurück, die im gewünschten Zeitraum mindestens ein verfügbares Zimmer haben.
+        
         hotels_in_city = self.__hotel_da.read_hotels_by_city(city.strip())
         matching_hotels = []
 
@@ -67,9 +64,8 @@ class HotelManager:
         check_in_date: date,
         check_out_date: date
     ) -> list[Hotel]:
-        """
-        Gibt Hotels zurück, die alle angegebenen Kriterien erfüllen.
-        """
+        # Gibt Hotels zurück, die alle angegebenen Kriterien erfüllen.
+        
         # Eingabevalidierung
         if not city or not isinstance(city, str):
             raise ValueError("City must be a non-empty string.")
@@ -94,15 +90,14 @@ class HotelManager:
         )
 
     def get_hotel_by_name(self, name: str) -> Hotel | None:
-        """
-        Gibt ein Hotel anhand seines Namens zurück.
-        """
+        # Gibt ein Hotel anhand seines Namens zurück.
+        
         if not name or not isinstance(name, str):
             raise ValueError("Name must be a non-empty string.")
         return self.__hotel_da.read_hotel_by_name(name.strip())
     
     def read_hotel_by_id(self, hotel_id: int) -> Hotel | None:
-        #Gibt ein Hotel anhand seiner Datenbank-ID zurück.
+        # Gibt ein Hotel anhand seiner Datenbank-ID zurück.
         
         # Eingabevalidierung
         if not isinstance(hotel_id, int) or hotel_id < 1:

@@ -14,7 +14,7 @@ class Hotel:
         stars: int,
         address: Address
     ):
-        # Ensure values for not nullable attributes or not the right type
+        # Stellt sicher, dass für nicht-nullbare Attribute Werte vorhanden sind und diese den richtigen Datentyp aufweisen.
         if hotel_id is None or not isinstance(hotel_id, int):
             raise ValueError("hotel_id is required and must be int")
         if not name or not isinstance(name, str):
@@ -24,13 +24,13 @@ class Hotel:
         if address is None or not isinstance(address, Address):
             raise ValueError("address is required and must be Address")
 
-        # private Attributes
+        # private Attribute
         self.__hotel_id: int    = hotel_id
         self.__name: str        = name
         self.__stars: int       = stars
         self.__address: Address = address
 
-        # Composition:Hotel maintains a list of its rooms.
+        # Komposition: Das Hotel verwaltet eine Liste seiner Zimmer.
         self.__rooms: list[Room] = []
 
     def __repr__(self) -> str:
@@ -69,11 +69,11 @@ class Hotel:
 
     @property
     def rooms(self) -> list[Room]:
-        # Return a copy so that the caller cannot modify the private list directly.
+        # Gibt eine Kopie zurück, damit der Aufrufer die private Liste nicht direkt verändern kann.
         return self.__rooms.copy()
 
     def add_room(self, room: Room) -> None:
-        # Adds a room to the Hotel and sets the back-reference in the Room to this Hotel.
+        # Fügt dem Hotel ein Zimmer hinzu und setzt im Zimmer die Rückreferenz auf dieses Hotel.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -82,7 +82,7 @@ class Hotel:
             room.hotel = self
 
     def remove_room(self, room: Room) -> None:
-        # Removes a room from the Hotel and clears its back-reference.
+        # Entfernt ein Zimmer aus dem Hotel und entfernt dessen Rückreferenz.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -91,5 +91,5 @@ class Hotel:
             room.hotel = None
 
     def get_hotel_details(self) -> str:
-        # Returns the name, star rating, and address.
+        # Gibt den Namen, die Sternebewertung und die Adresse zurück.
         return f"{self.__name} ({self.__stars}★), {self.__address.get_full_address()}"
