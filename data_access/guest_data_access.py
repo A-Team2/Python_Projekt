@@ -39,3 +39,39 @@ class GuestDataAccess(BaseDataAccess):
             if address:
                 guests.append(Guest(guest_id, first_name, last_name, email, address))
         return guests
+    
+    def read_guest_by_email(self, email: str) -> Guest | None:
+        sql = """
+        SELECT guest_id, first_name, last_name, email, address_id
+        FROM guest
+        WHERE email = ?
+        """
+        row = self.fetchone(sql, (email,))
+        if not row:
+            return None
+
+        guest_id, first_name, last_name, email, address_id = row
+        address = AddressDataAccess().read_address_by_id(address_id)
+        if address is None:
+            return None
+
+        return Guest(guest_id, first_name, last_name, email, address)
+    
+    def insert_guest(
+        self,
+        *,
+        first_name: str,
+        last_name: str,
+        email: str,
+        address_id: int
+    ) -> int:
+        """
+        Legt einen neuen Gast an.
+        """
+        sql = """
+        INSERT INTO guest (first_name, last_name, email, address_id)
+        VALUES (?, ?, ?, ?)
+        """
+        params = (first_name, last_name, email, address_id)
+        last_id, _ = self.execute(sql, params)
+        return last_id

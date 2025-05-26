@@ -138,3 +138,7 @@ dist
 
 __pycache__/
 *.pyc
+
+refrence_project/
+
+database/working_hotel.db

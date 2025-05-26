@@ -2,8 +2,6 @@ from ui import input_helper
 from business_logic.hotel_manager import HotelManager
 
 def run(hotel_manager: HotelManager):
-    print("\n=== Hotels in Stadt mit Zimmern für Gästeanzahl (US 1.3) ===")
-    
     city = None
     guest_count = None
     cancel = False

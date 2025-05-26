@@ -27,42 +27,76 @@ def show_menu():
     print("2. Hotels in Stadt mit Mindeststerne anzeigen (US 1.2)")
     print("3. Hotels in Stadt mit Zimmern für Gästeanzahl anzeigen (US 1.3)")
     print("4. Hotel in Stadt suchen Aufenthalt (US 1.4)")
-    print("5. Zimmer buchen (US 4 + 5)") 
-    print("6. Buchung stornieren (US 1.6)")
-    print("7. Dynamischen Zimmerpreis berechnen (US 1.7)")
-
+    print("5. Wünsche kombinieren (US 1.5)")
+    print("6. Hotelinformationen anzeigen (US 1.6)")
+    print("7. Zimmertypen eines Hotels anzeigen (US 2.1)")
+    print("8. Verfügbare Zimmer nach Zeitraum anzeigen (US 2.2)")
+    print("9. Hotel hinzufügen (US 3.1)")
+    print("10. Hotel entfernen (US 3.2)")
+    print("11. Hotel aktualisieren (US 3.3)")
+    print("12. Zimmer buchen (US 4)")
+    print("13. Rechnung erhalten (US 5)")
+    print("14. Buchung stornieren (US 6)")
     print("0. Beenden")
     print("================================")
 
 def run_user_story(choice):
     if choice == 1:
         print("\n🏨 Hotel in Stadt anzeigen (US 1.1)")
-        from user_stories import Hotel_in_Stadt
-        Hotel_in_Stadt.run(hotel_manager)
+        from user_stories.Eins.Hotel_in_Stadt import run
+        run(hotel_manager)
     elif choice == 2:
         print("\n🏨 Hotels in Stadt mit Mindeststerne anzeigen (US 1.2)")
-        from user_stories import Hotel_in_Stadt_Sterne
-        Hotel_in_Stadt_Sterne.run(hotel_manager)
+        from user_stories.Eins.Hotel_in_Stadt_Sterne import run
+        run(hotel_manager)
     elif choice == 3:
         print("\n🏨 Hotels in Stadt mit Zimmern für Gästeanzahl anzeigen (US 1.3)")
-        from user_stories import Hotel_in_Stadt_Zimmer_Gästeanzahl
-        Hotel_in_Stadt_Zimmer_Gästeanzahl.run(hotel_manager)
+        from user_stories.Eins.Hotel_in_Stadt_Zimmer_Gästeanzahl import run
+        run(hotel_manager)
     elif choice == 4:
         print("\n🏨 Hotel in Stadt suchen nach bestimmten Aufenthalt (US 1.4)")
-        from user_stories import Hotel_in_Stadt_suchen_Aufenthalt
-        Hotel_in_Stadt_suchen_Aufenthalt.run(hotel_manager)
+        from user_stories.Eins.Hotel_in_Stadt_suchen_Aufenthalt import run
+        run(hotel_manager)
     elif choice == 5:
-        print("\n📅 Zimmer buchen (US 4 + 5)")
-        from user_stories import zimmer_buchen
-        zimmer_buchen.run()
+        print("\n🏨 Wünsche kombinieren (US 1.5)")
+        from user_stories.Eins.Wünsche_kombiniert import run
+        run(hotel_manager)
     elif choice == 6:
-        print("\n🗑️ Buchung stornieren (US 1.6)")
-        from user_stories import booking_stornieren
-        booking_stornieren.run()
+        print("\n🏨 Hotelinformationen anzeigen (US 1.6)")
+        from user_stories.Eins.Hotelinformationen import run
+        run(hotel_manager)
     elif choice == 7:
-       print("\n💰 Dynamischen Zimmerpreis berechnen (US 1.7)")
-       from user_stories import dynamische_preise_berechnen
-       dynamische_preise_berechnen.run()
+        print("\n🏨 Zimmertypen eines Hotels anzeigen (US 2.1)")
+        from user_stories.Zwei.Zimmerypen_Hotel import run
+        run(hotel_manager)
+    elif choice == 8:
+        print("\n🏨 Verfügbare Zimmer nach Zeitraum anzeigen (US 2.2)")
+        from user_stories.Zwei.Zimmer_sehen import run
+        run(hotel_manager)
+    elif choice == 9:
+        print("\n🏨 Hotel hinzufügen (US 3.1)")
+        from user_stories.Drei.Hotel_hinzufügen import run
+        run(hotel_manager)
+    elif choice == 10:
+        print("\n🏨 Hotel entfernen (US 3.2)")
+        from user_stories.Drei.Hotel_entfernen import run
+        run(hotel_manager)
+    elif choice == 11:
+        print("\n🏨 Hotel aktualisieren (US 3.3)")
+        from user_stories.Drei.Hotel_aktualisieren import run
+        run(hotel_manager)
+    elif choice == 12:
+        print("\n🏨 Zimmer buchen (US 4)")
+        from user_stories.Vier.Zimmer_buchen import run
+        run(hotel_manager)
+    elif choice == 13:
+        print("\n🧾 Rechnung nach Aufenthalt erstellen (US 5)")
+        from user_stories.Fünf.Rechnung_erhalten import run
+        run(hotel_manager)
+    elif choice == 14:
+        print("\n🗑️ Buchung stornieren (US 6)")
+        from user_stories.Sechs.Buchung_stornieren import run
+        run()
     else:
         print("Ungültige Auswahl!")
         
@@ -70,7 +104,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-7): ", min_value=0, max_value=7)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-14): ", min_value=0, max_value=14)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break
