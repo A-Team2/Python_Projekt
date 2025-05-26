@@ -95,6 +95,12 @@ class Booking:
     @property
     def guest(self) -> Guest:
         return self.__guest
+   
+    @guest.setter
+    def guest(self, guest: Guest) -> None:
+        if not isinstance(guest, Guest):
+            raise ValueError("guest must be a Guest instance")
+        self.__guest = guest
 
     @guest.setter
     def guest(self, guest: Guest) -> None:
