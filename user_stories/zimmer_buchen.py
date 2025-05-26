@@ -18,7 +18,7 @@ def run():
     # 2. Zimmer-ID eingeben
     room_id = input_helper.input_valid_int("Geben Sie die Zimmer-ID ein: ", min_value=1)
     room_dao = RoomDataAccess()
-    room = room_dao.read_room_by_id(room_id)
+    room = room_dao.read_rooms_by_hotel_id(room_id)
     if not room:
         print("❌ Kein Zimmer mit dieser ID gefunden.")
         return

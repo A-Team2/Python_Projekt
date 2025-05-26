@@ -2,6 +2,7 @@ from __future__ import annotations
 from model.address import Address
 
 
+
 class Hotel:
     """
     Model Class Hotel
@@ -42,6 +43,7 @@ class Hotel:
     @property
     def hotel_id(self) -> int:
         return self.__hotel_id
+    
 
     @property
     def name(self) -> str:

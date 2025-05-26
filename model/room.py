@@ -53,6 +53,7 @@ class Room:
     @property
     def room_id(self) -> int:
         return self.__room_id
+    
 
     @property
     def room_number(self) -> int:
@@ -77,6 +78,13 @@ class Room:
     @property
     def hotel(self) -> Hotel:
         return self.__hotel
+    
+    @hotel.setter
+    def hotel(self, hotel: Hotel) -> None:
+        if not isinstance(hotel, Hotel):
+            raise ValueError("hotel must be a Hotel instance")
+        self.__hotel = hotel
+
 
     @property
     def room_type(self) -> RoomType:
