@@ -2,6 +2,7 @@ from ui import input_helper
 from business_logic.guest_manager import GuestManager
 from business_logic.booking_manager import BookingManager
 from business_logic.invoice_manager import InvoiceManager
+from ui.validation_helper import is_valid_email
 
 def run():
     gm = GuestManager()
@@ -14,6 +15,10 @@ def run():
     while not email and not cancel:
         try:
             email = input_helper.input_valid_string("E-Mail zum Identifizieren: ", min_length=5)
+            if not is_valid_email(email):
+                print("Bitte geben Sie eine gültige E-Mail-Adresse ein!")
+                email = None
+                continue
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:

@@ -7,6 +7,7 @@ from model.address import Address
 from model.guest import Guest
 from datetime import datetime
 import re
+from ui.validation_helper import is_valid_email
 
 def run(hotel_manager: HotelManager):
     # Manager-Instanzen initialisieren
@@ -15,10 +16,6 @@ def run(hotel_manager: HotelManager):
     bm = BookingManager()
     address_da = AddressDataAccess()
 
-    # E-Mail validieren
-    def valid_email(email):
-        return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email)
-
     # Strasse validieren (mind. ein Leerzeichen und am Ende eine Zahl)
     def valid_street(street):
         return re.match(r"^.+ \d+[a-zA-Z]?$", street)
@@ -26,7 +23,7 @@ def run(hotel_manager: HotelManager):
     # 1) Gast per E-Mail suchen oder neu anlegen
     while True:
         email = input_helper.input_valid_string("Ihre E-Mail: ", min_length=5)
-        if not valid_email(email):
+        if not is_valid_email(email):
             print("Bitte geben Sie eine gültige E-Mail-Adresse ein!")
             continue
         break

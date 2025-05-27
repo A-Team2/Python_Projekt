@@ -3,6 +3,7 @@ from datetime import date
 from model.guest import Guest
 from model.invoice import Invoice
 
+
 class Booking:
     """
     Model Class for Booking
@@ -27,6 +28,7 @@ class Booking:
             raise ValueError("check_out_date is required and must be date")
         if guest is None or not isinstance(guest, Guest):
             raise ValueError("guest is required and must be Guest")
+        from model.room import Room
         if not isinstance(rooms, list) or any(not isinstance(r, Room) for r in rooms):
             raise ValueError("rooms is required and must be list of Room")
         if total_amount is None or not isinstance(total_amount, float):
@@ -104,12 +106,6 @@ class Booking:
    
     @guest.setter
     def guest(self, guest: Guest) -> None:
-        if not isinstance(guest, Guest):
-            raise ValueError("guest must be a Guest instance")
-        self.__guest = guest
-
-    @guest.setter
-    def guest(self, guest: Guest) -> None:
         if guest is None or not isinstance(guest, Guest):
              raise ValueError("guest must be a Guest instance or None")
         self.__guest = guest
@@ -120,7 +116,6 @@ class Booking:
         return self.__rooms.copy()
 
     def add_room(self, room: 'Room') -> None:
-        # Verknüpft ein Zimmer mit dieser Buchung.
         from model.room import Room
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
@@ -128,7 +123,6 @@ class Booking:
             self.__rooms.append(room)
 
     def remove_room(self, room: 'Room') -> None:
-        # Entfernt die Assoziation zum Zimmer; das Zimmer selbst bleibt weiterhin bestehen.
         from model.room import Room
         if room in self.__rooms:
             self.__rooms.remove(room)

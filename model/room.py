@@ -7,7 +7,7 @@ from model.booking import Booking
 
 class Room:
     """
-    Model Class Room
+    Model-Klasse für Zimmer
     """
 
     def __init__(
@@ -52,11 +52,13 @@ class Room:
 
     @property
     def room_id(self) -> int:
+        # Gibt die Zimmer-ID zurück
         return self.__room_id
     
 
     @property
     def room_number(self) -> int:
+        # Gibt die Zimmernummer zurück
         return self.__room_number
 
     @room_number.setter
@@ -67,6 +69,7 @@ class Room:
 
     @property
     def price_per_night(self) -> float:
+        # Gibt den Preis pro Nacht zurück
         return self.__price_per_night
 
     @price_per_night.setter
@@ -77,6 +80,7 @@ class Room:
 
     @property
     def hotel(self) -> Hotel:
+        # Gibt das zugehörige Hotel zurück
         return self.__hotel
     
     @hotel.setter
@@ -101,10 +105,12 @@ class Room:
 
     @property
     def room_type(self) -> RoomType:
+        # Gibt den Zimmertyp zurück
         return self.__room_type
 
     @property
     def facilities(self) -> list[Facilities]:
+        # Gibt die Liste der Ausstattungen zurück
         # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__facilities.copy()
 
@@ -120,6 +126,7 @@ class Room:
 
     @property
     def bookings(self) -> list[Booking]:
+        # Gibt die Liste der Buchungen zurück
         return self.__bookings.copy()
 
     def add_booking(self, booking: Booking) -> None:
@@ -133,7 +140,7 @@ class Room:
             self.__bookings.remove(booking)
 
     def get_room_details(self) -> str:
-        # Gibt eine kurze Beschreibung des Zimmers zurück.
+        # Gibt eine Kurzbeschreibung des Zimmers zurück
         return f"Zimmer {self.__room_number}, Preis: {self.__price_per_night:.2f} CHF/Nacht"
 
     def is_available(self, check_in: date, check_out: date) -> bool:
@@ -161,5 +168,5 @@ class Room:
     
     @property
     def room_no(self) -> int:
-        # Gibt die für Menschen lesbare Zimmernummer zurück.
+        # Gibt die Zimmernummer für Menschen lesbar zurück
         return self.__room_number
