@@ -95,3 +95,17 @@ class BookingDataAccess(BaseDataAccess):
         ORDER BY check_in_date
         """
         return self.fetchall(sql, (guest_id,))
+    
+    def read_all_bookings(self) -> list[tuple]:
+        sql = """
+        SELECT booking_id,
+               check_in_date,
+               check_out_date,
+               is_cancelled,
+               total_amount,
+               guest_id,
+               room_id
+          FROM booking
+        ORDER BY check_in_date
+        """
+        return self.fetchall(sql, ())

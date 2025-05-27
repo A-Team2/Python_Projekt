@@ -4,6 +4,7 @@ from model.guest import Guest
 from model.room import Room
 from data_access.booking_data_access import BookingDataAccess
 from business_logic.hotel_manager import HotelManager
+from data_access.guest_data_access import GuestDataAccess 
 
 # BookingManager verwaltet alle Buchungsregeln
 class BookingManager:
@@ -80,3 +81,22 @@ class BookingManager:
         self.__booking_da.cancel_booking(booking_id)
         # 2) Objekt ebenfalls updaten
         booking.is_cancelled = True
+        
+    def get_all_bookings(self) -> list[Booking]:
+        # 1) Alle Daten-Zeilen aus der DB holen
+        rows = self.__booking_da.read_all_bookings()
+        # 2) In Booking-Objekte umwandeln
+        bookings: list[Booking] = []
+        for b_id, ci, co, cancelled, total, guest_id, room_id in rows:
+            guest = GuestDataAccess().read_guest_by_id(guest_id)
+            booking = Booking(
+                b_id,
+                datetime.strptime(ci, "%Y-%m-%d").date() if isinstance(ci, str) else ci,
+                datetime.strptime(co, "%Y-%m-%d").date() if isinstance(co, str) else co,
+                guest,
+                [],  # rooms nicht gebraucht
+                float(total),
+                bool(cancelled)
+            )
+            bookings.append(booking)
+        return bookings
