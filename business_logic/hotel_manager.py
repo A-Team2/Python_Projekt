@@ -2,6 +2,8 @@ import model
 import data_access
 from model.hotel import Hotel
 from model.address import Address
+from data_access.room_data_access import RoomDataAccess
+from model.room import Room
 from datetime import date
 
 
@@ -147,3 +149,21 @@ class HotelManager:
         from data_access.room_data_access import RoomDataAccess
         room_da = RoomDataAccess()
         return room_da.read_room_by_id(room_id)
+    
+    def get_available_rooms(
+        self,
+        hotel_id: int,
+        check_in: date,
+        check_out: date
+    ) -> list[Room]:
+        # Validierung
+        if not isinstance(hotel_id, int) or hotel_id < 1:
+            raise ValueError("hotel_id must be a positive integer")
+        if not isinstance(check_in, date) or not isinstance(check_out, date):
+            raise ValueError("check_in and check_out must be date objects")
+        if check_out <= check_in:
+            raise ValueError("check_out must be after check_in")
+
+        # Delegation an den Room‐DAO
+        dao = RoomDataAccess()
+        return dao.read_available_rooms(hotel_id, check_in, check_out)

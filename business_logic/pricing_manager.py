@@ -1,29 +1,41 @@
 from data_access.room_data_access import RoomDataAccess
-from datetime import timedelta, date
+from datetime import date, timedelta
 
 class PricingManager:
     def __init__(self):
         self.room_dao = RoomDataAccess()
 
-    def calculate_price(self, room_id: int, check_in: date, check_out: date, guests: int) -> float:
+    def calculate_price(
+        self,
+        room_id: int,
+        check_in: date,
+        check_out: date
+    ) -> float:
+        # 1) Zimmer laden
         room = self.room_dao.read_room_by_id(room_id)
         if not room:
             raise ValueError("Zimmer nicht gefunden.")
 
+        # 2) Aufenthaltsdauer prüfen
         nights = (check_out - check_in).days
         if nights <= 0:
             raise ValueError("Aufenthaltsdauer muss mindestens 1 Nacht sein.")
 
-        price = room.base_price_per_night * nights
+        # 3) Saisonal dynamischen Preis pro Tag berechnen
+        total = 0.0
+        current = check_in
+        while current < check_out:
+            base = room.price_per_night
+            month = current.month
 
-        # Zuschläge
-        if guests > room.max_guests:
-            raise ValueError("Zu viele Gäste für diesen Zimmertyp.")
+            if 6 <= month <= 8:
+                factor = 1.2   # Hochsaison
+            elif month in (11, 12, 1, 2):
+                factor = 0.8   # Nebensaison
+            else:
+                factor = 1.0   # Zwischensaison
 
-        if guests > 2:
-            price *= 1.2  # 20% Aufschlag ab 3 Gästen
+            total += base * factor
+            current += timedelta(days=1)
 
-        if nights >= 5:
-            price *= 0.9  # 10% Rabatt für längeren Aufenthalt
-
-        return round(price, 2)
+        return round(total, 2)

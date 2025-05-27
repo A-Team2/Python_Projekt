@@ -37,8 +37,9 @@ def show_menu():
     print("12. Zimmer buchen (US 4)")
     print("13. Rechnung erhalten (US 5)")
     print("14. Buchung stornieren (US 6)")
-    print("15. Zimmer mit Ausstattung anzeigen (US 9)")
-    print("16. Stammdaten verwalten (US 10)")
+    print("15. Dynamischen Zimmerpreis berechnen (US 7)")
+    print("16. Zimmer mit Ausstattung anzeigen (US 9)")
+    print("17. Stammdaten verwalten (US 10)")
     print("0. Beenden")
     print("================================")
 
@@ -100,10 +101,14 @@ def run_user_story(choice):
         from user_stories.Sechs.Buchung_stornieren import run
         run()
     elif choice == 15:
+        print("\n💰 Dynamischen Zimmerpreis berechnen (US 7)")
+        from user_stories.Sieben.dynamische_Preise import run
+        run(hotel_manager)
+    elif choice == 16:
         print("\n🏨 Zimmer mit Ausstattung anzeigen (US 9)")
         from user_stories.Neun.Zimmer_mit_Ausstatung import run
         run(hotel_manager)
-    elif choice == 16:
+    elif choice == 17:
         print("\n⚙️ Stammdaten verwalten (US 10)")
         from user_stories.Zehn.Stammdaten_verwalten import run
         run(hotel_manager)
@@ -114,7 +119,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-16): ", min_value=0, max_value=16)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-17): ", min_value=0, max_value=17)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break
