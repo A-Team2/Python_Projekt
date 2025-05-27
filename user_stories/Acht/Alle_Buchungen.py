@@ -12,4 +12,4 @@ def run(hotel_manager):
     for i, b in enumerate(bookings, start=1):
         status = "storniert" if b.is_cancelled else "aktiv"
         print(f"{i}. ID {b.booking_id}: {b.guest.first_name} {b.guest.last_name}, "
-              f"{b.check_in_date}–{b.check_out_date}, {b.total_amount:.2f} CHF, {status}")
+              f"{b.check_in_date} bis {b.check_out_date}, {b.total_amount:.2f} CHF, {status}")
