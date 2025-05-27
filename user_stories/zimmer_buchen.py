@@ -2,7 +2,7 @@ from datetime import date
 from ui import input_helper
 from business_logic.booking_manager import BookingManager
 from data_access.guest_data_access import GuestDataAccess
-from data_access.room_data_access import RoomDataAccess
+from business_logic.hotel_manager import HotelManager
 
 def run():
     print("\n🛏️ Zimmer buchen")
@@ -17,8 +17,8 @@ def run():
 
     # 2. Zimmer-ID eingeben
     room_id = input_helper.input_valid_int("Geben Sie die Zimmer-ID ein: ", min_value=1)
-    room_dao = RoomDataAccess()
-    room = room_dao.read_rooms_by_hotel_id(room_id)
+    hotel_manager = HotelManager()
+    room = hotel_manager.get_room_by_id(room_id)
     if not room:
         print("❌ Kein Zimmer mit dieser ID gefunden.")
         return

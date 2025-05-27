@@ -25,7 +25,7 @@ def run(hotel_manager=None):
         print("Vorgang abgebrochen.")
         return
 
-    # 2) Gast laden
+    # 2) Gast laden (als echtes Guest-Objekt!)
     guest = gm.read_guest_by_email(email)
     if guest is None:
         print("Unbekannte E-Mail.")
@@ -49,26 +49,20 @@ def run(hotel_manager=None):
     cancel = False
     while idx is None and not cancel:
         try:
-            # hier mit input_helper.input_valid_int aufrufen
             idx = input_helper.input_valid_int(
-                f"Wählen Sie eine Buchung (1–{len(completed)}): ",
+                f"Bitte Aufenthalt wählen (1–{len(completed)}): ",
                 min_value=1,
                 max_value=len(completed)
             )
-        except input_helper.EmptyInputError:
-            cancel = True
-        except ValueError as err:
-            print("Fehler:", err)
-
+        except (ValueError, input_helper.EmptyInputError) as err:
+            print(err)
+            idx = None
     if cancel:
         print("Vorgang abgebrochen.")
         return
 
-    booking = completed[idx-1]
-
+    selected_booking = completed[idx-1]
     # 6) Rechnung erzeugen und anzeigen
-    invoice = im.generate_invoice(booking)
-    print(f"\nRechnung #{invoice.invoice_id}")
-    print(f" Buchung: {invoice.booking.booking_id}")
-    print(f" Ausstellungsdatum: {invoice.issue_date}")
-    print(f" Gesamtbetrag: {invoice.total_amount:.2f} CHF\n")
+    invoice = im.generate_invoice(selected_booking)
+    print("\nIhre Rechnung:")
+    print(invoice.get_invoice_details())

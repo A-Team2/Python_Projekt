@@ -43,7 +43,10 @@ def run():
     # 4) Liste anzeigen
     print("Ihre aktiven Buchungen:")
     for i, b in enumerate(open_bookings, start=1):
-        print(f" {i}. Hotel {b.room.hotel.name}, {b.check_in_date} – {b.check_out_date}")
+        if b.rooms and len(b.rooms) > 0:
+            print(f" {i}. Hotel {b.rooms[0].hotel.name}, {b.check_in_date} – {b.check_out_date}")
+        else:
+            print(f" {i}. (Zimmerdaten nicht geladen), {b.check_in_date} – {b.check_out_date}")
 
     # 5) Auswahl treffen
     choice = None

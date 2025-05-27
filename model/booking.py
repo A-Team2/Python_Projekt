@@ -14,7 +14,7 @@ class Booking:
         check_in_date: date,
         check_out_date: date,
         guest: Guest,
-        rooms: list[Room],
+        rooms: list['Room'],
         total_amount: float = 0.0,
         is_cancelled: bool = False
     ):
@@ -46,7 +46,7 @@ class Booking:
         guest.add_booking(self)
 
         # Assoziation: Rooms managen
-        self.__rooms: list[Room] = []
+        self.__rooms: list['Room'] = []
         for room in rooms:
             self.add_room(room)
 
@@ -75,6 +75,12 @@ class Booking:
     @property
     def is_cancelled(self) -> bool:
         return self.__is_cancelled
+
+    @is_cancelled.setter
+    def is_cancelled(self, value: bool) -> None:
+        if not isinstance(value, bool):
+            raise ValueError("is_cancelled muss ein bool sein")
+        self.__is_cancelled = value
 
     def cancel(self) -> None:
         # Markiert diese Buchung als storniert und entfernt die zugehörige Rechnung.
@@ -109,11 +115,11 @@ class Booking:
         self.__guest = guest
 
     @property
-    def rooms(self) -> list[Room]:
+    def rooms(self) -> list['Room']:
         # Gibt eine Kopie zurück, um die interne Liste zu schützen.
         return self.__rooms.copy()
 
-    def add_room(self, room: Room) -> None:
+    def add_room(self, room: 'Room') -> None:
         # Verknüpft ein Zimmer mit dieser Buchung.
         from model.room import Room
         if not isinstance(room, Room):
@@ -121,7 +127,7 @@ class Booking:
         if room not in self.__rooms:
             self.__rooms.append(room)
 
-    def remove_room(self, room: Room) -> None:
+    def remove_room(self, room: 'Room') -> None:
         # Entfernt die Assoziation zum Zimmer; das Zimmer selbst bleibt weiterhin bestehen.
         from model.room import Room
         if room in self.__rooms:

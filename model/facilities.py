@@ -17,7 +17,7 @@ class Facilities:
         self.__facility_name: str  = facility_name
 
         # Bidirektionale Assoziation zu Zimmern.
-        self.__rooms: list[Room] = []
+        self.__rooms: list = []
 
     def __repr__(self) -> str:
         return (
@@ -40,21 +40,21 @@ class Facilities:
         self.__facility_name = facility_name
 
     @property
-    def rooms(self) -> list[Room]:
+    def rooms(self) -> list:
         return self.__rooms.copy()
 
-    def add_room(self, room: Room) -> None:
-        # Fügt dieser Einrichtung ein Zimmer hinzu und setzt im Zimmer die Rückreferenz.
+    def add_room(self, room):
         from model.room import Room
+        # Fügt dieser Einrichtung ein Zimmer hinzu und setzt im Zimmer die Rückreferenz.
         if not isinstance(room, Room):
             raise ValueError("room must be a Room instance")
         if room not in self.__rooms:
             self.__rooms.append(room)
             room.add_facility(self)
 
-    def remove_room(self, room: Room) -> None:
-        # Entfernt ein Zimmer von dieser Einrichtung und entfernt im Zimmer die Rückreferenz.
+    def remove_room(self, room):
         from model.room import Room
+        # Entfernt ein Zimmer von dieser Einrichtung und entfernt im Zimmer die Rückreferenz.
         if room in self.__rooms:
             self.__rooms.remove(room)
             room.remove_facility(self)

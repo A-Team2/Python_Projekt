@@ -163,8 +163,3 @@ class Room:
     def room_no(self) -> int:
         # Gibt die für Menschen lesbare Zimmernummer zurück.
         return self.__room_number
-
-    @property
-    def price_per_night(self) -> float:
-        # Gibt den Preis pro Nacht zurück.
-        return self.__price_per_night

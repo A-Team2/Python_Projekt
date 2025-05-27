@@ -136,3 +136,14 @@ class HotelManager:
         if address is None:
             raise ValueError("Adresse darf nicht None sein.")
         self.__hotel_da.update_hotel(hotel_id, name, stars, address)
+
+    def get_all_hotels(self) -> list[Hotel]:
+        return self.__hotel_da.read_all_hotels()
+
+    def get_room_by_id(self, room_id: int):
+        """Gibt ein Zimmer-Objekt anhand der Zimmer-ID zurück (oder None)."""
+        if not isinstance(room_id, int) or room_id < 1:
+            raise ValueError("room_id muss eine positive ganze Zahl sein.")
+        from data_access.room_data_access import RoomDataAccess
+        room_da = RoomDataAccess()
+        return room_da.read_room_by_id(room_id)

@@ -95,3 +95,24 @@ class Hotel:
     def get_hotel_details(self) -> str:
         # Gibt den Namen, die Sternebewertung und die Adresse zurück.
         return f"{self.__name} ({self.__stars}★), {self.__address.get_full_address()}"
+
+    def get_room_types(self) -> list:
+        # Gibt alle unterschiedlichen RoomType-Objekte des Hotels zurück
+        return list({room.room_type for room in self.rooms})
+
+    def get_all_facilities(self) -> list:
+        # Gibt alle unterschiedlichen Facilities-Objekte des Hotels zurück
+        facilities = set()
+        for room in self.rooms:
+            facilities.update(room.facilities)
+        return list(facilities)
+
+    def add_room_object(self, room):
+        # Fügt ein Zimmerobjekt direkt zur internen Liste hinzu (ohne Rückreferenz-Logik)
+        if room not in self.__rooms:
+            self.__rooms.append(room)
+
+    def remove_room_object(self, room):
+        # Entfernt ein Zimmerobjekt direkt aus der internen Liste (ohne Rückreferenz-Logik)
+        if room in self.__rooms:
+            self.__rooms.remove(room)

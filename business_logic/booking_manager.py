@@ -3,6 +3,7 @@ from model.booking import Booking
 from model.guest import Guest
 from model.room import Room
 from data_access.booking_data_access import BookingDataAccess
+from business_logic.hotel_manager import HotelManager
 
 class BookingManager:
     def __init__(self):
@@ -44,8 +45,20 @@ class BookingManager:
         rows = self.__booking_da.read_bookings_by_guest_id(guest.guest_id)
         # 3) in Booking‐Objekte wandeln
         bookings: list[Booking] = []
+        hotel_manager = HotelManager()
         for row in rows:
-            bookings.append(Booking(*row))
+            booking_id, check_in_date, check_out_date, is_cancelled, total_amount, guest_id, room_id = row
+            room = hotel_manager.get_room_by_id(room_id) if room_id else None
+            rooms = [room] if room else []
+            bookings.append(Booking(
+                booking_id=booking_id,
+                check_in_date=check_in_date,
+                check_out_date=check_out_date,
+                guest=guest,
+                rooms=rooms,
+                total_amount=float(total_amount),
+                is_cancelled=bool(is_cancelled)
+            ))
         return bookings
     
     def read_booking(self, booking_id: int) -> Booking | None:

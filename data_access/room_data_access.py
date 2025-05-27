@@ -103,3 +103,47 @@ class RoomDataAccess(BaseDataAccess):
                         rooms.append(room)
         
         return rooms
+
+    def read_room_by_id(self, room_id: int) -> Room | None:
+        sql = """
+        SELECT r.room_id, r.room_number, r.price_per_night, r.hotel_id, r.type_id
+        FROM Room r
+        WHERE r.room_id = ?
+        """
+        row = self.fetchone(sql, (room_id,))
+        if not row:
+            return None
+        room_id, room_number, price_per_night, hotel_id, type_id = row
+        # Hole das Hotel
+        hotel_sql = "SELECT hotel_id, name, stars, address_id FROM Hotel WHERE hotel_id = ?"
+        hotel_row = self.fetchone(hotel_sql, (hotel_id,))
+        if not hotel_row:
+            return None
+        hotel_id, name, stars, address_id = hotel_row
+        address_sql = "SELECT address_id, street, city, zip_code FROM Address WHERE address_id = ?"
+        address_row = self.fetchone(address_sql, (address_id,))
+        if not address_row:
+            return None
+        from model.address import Address
+        address = Address(*address_row)
+        hotel = Hotel(hotel_id, name, stars, address)
+        # Hole den Raumtyp
+        room_type_sql = "SELECT type_id, description, max_guests FROM Room_Type WHERE type_id = ?"
+        room_type_row = self.fetchone(room_type_sql, (type_id,))
+        if not room_type_row:
+            return None
+        type_id, description, max_guests = room_type_row
+        room_type = RoomType(type_id, description, max_guests)
+        room = Room(room_id, int(room_number), price_per_night, hotel, room_type)
+        # Buchungen laden und zuweisen
+        booking_da = BookingDataAccess()
+        bookings = booking_da.read_bookings_by_room(room_id)
+        for booking in bookings:
+            room.add_booking(booking)
+        # Facilities laden
+        from data_access.facility_data_access import FacilityDataAccess
+        facility_da = FacilityDataAccess()
+        facilities = facility_da.read_facilities_by_room(room_id)
+        for facility in facilities:
+            room.add_facility(facility)
+        return room
