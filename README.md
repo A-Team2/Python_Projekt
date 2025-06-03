@@ -1,2 +1,341 @@
 ![image](https://github.com/user-attachments/assets/d273947d-7d7a-4e1a-8c09-a4acf01cf47a)
+# Hotel Reservation System
+
+Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python“ (FS25)** an der FHNW umgesetzt. Ziel war es, ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte wie objektorientierte Programmierung, eine mehrschichtige Architektur und Datenbankzugriffe mit SQLite abbildet und die vorgegebenen User Stories erfüllt.
+
+---
+
+## 1. Projektübersicht
+
+Das System ermöglicht es Gästen, nach verfügbaren Hotels und Zimmern zu suchen, Buchungen anzulegen, zu stornieren und nach einem Aufenthalt Rechnungen zu erhalten. Gleichzeitig bietet es Administratoren Einsicht in sämtliche Buchungen.
+
+- **Programmiersprache:** Python 3  
+- **Datenbank:** SQLite  
+- **IDE:** Visual Studio Code  
+- **Versionskontrolle & Kollaboration:** GitHub  
+- **Architektur (Schichtenmodell):**  
+  1. **Model Layer** – Domänenklassen (Hotel, Room, Guest, Booking, Invoice, …)  
+  2. **Data Access Layer (DAL)** – CRUD-Operationen auf SQLite  
+  3. **Business Logic Layer (BLL)** – Geschäftslogik und Validierungen  
+  4. **UI Layer** – Konsolen-Menü (`run.py`), Eingabe- und Validierungshelfer (`input_helper.py`, `validation_helper.py`)  
+  5. **User Stories** – Skripte je Anwendungsfall (`user_stories/…`)
+
+---
+
+## 2. Aufgabenteilung
+
+Wir waren zu zweit im aktiven Kernteam und haben die Implementierung folgendermaßen aufgeteilt:
+
+| Teammitglied        | Zuständigkeiten                                                                                                                                         |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Gianluca (du)**   | Model Layer (Domänenklassen) & UI Layer (`input_helper.py`)                                              |
+| **Miro**            | Data Access Layer (SQLite-SQL, DA-Klassen) & UI Layer (`validation_helper.py`)                                                                                                            |
+| **Business Logic**  | Wurde passend zu den User Stories sukzessive zwischen uns beiden aufgeteilt und gemeinsam implementiert                                                 |
+
+> **Hinweis:**  
+> Anfangs waren wir vier Teammitglieder, doch zwei haben sich nur kurzfristig für GitHub-Aktivitäten eingeloggt und keinen Programmcode beigesteuert. Daher haben wir die verbleibenden User Stories fair aufgeteilt und in enger Abstimmung abgearbeitet.
+
+---
+
+## 3. Code-Architektur & Ordnerstruktur
+
+Die Architektur ist in klassische Schichten (Layers) gegliedert. Jeder Layer hat klar abgegrenzte Verantwortlichkeiten:
+
+
+
+
+
+### 3.1 Model Layer (Domänenklassen)
+
+| **Klasse**     | **Beschreibung**                                                                                                                                                                                                |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Hotel**      | Enthält `hotel_id`, `name`, `stars`, `address: Address`, `rooms: list[Room]`<br>Methoden: `add_room()`, `remove_room()` – bidirektionale Assoziation mit `Room`.                                               |
+| **Room**       | Enthält `room_id`, `room_number`, `price_per_night`, `hotel: Hotel`, `room_type: RoomType`<br>Methoden: `is_available(check_in, check_out)`, `add_booking()`, `remove_booking()`.                              |
+| **RoomType**   | Enthält `type_id`, `description`, `max_guests` – Klassifizierung eines Zimmertyps (z. B. Suite, Single).                                                                                                           |
+| **Facilities** | Enthält `facility_id`, `name` – m:n-Beziehung über Zwischentabelle `room_facilities`.                                                                                                                          |
+| **Guest**      | Enthält `guest_id`, `first_name`, `last_name`, `email`, `address: Address`, `bookings: list[Booking]`<br>Methoden: `add_booking()`, `remove_booking()`.                                                             |
+| **Booking**    | Enthält `booking_id`, `check_in_date: date`, `check_out_date: date`, `guest: Guest`, `rooms: list[Room]`, `total_amount: float`, `is_cancelled: bool`, `invoice: Invoice`<br>Methoden: `cancel()`, `get_booking_details()`. |
+| **Invoice**    | Enthält `booking: Booking`, `issue_date: date`, `total_amount: float` – jede Buchung erzeugt eine Rechnung (Komposition).<br>Methoden: `get_invoice_details()`.                                                    |
+| **Address**    | Enthält `address_id`, `street`, `city`, `zip_code` – wird von `Hotel` und `Guest` genutzt, um Adressdaten zu konsolidieren.                                                                                    |
+
+> **Assoziationen & Kompositionen**  
+> - `Hotel ↔ Room`: Ein Hotel hält eine Liste von `Room`-Objekten; jedes `Room` verweist auf sein `Hotel`.  
+> - `Guest ↔ Booking`: Ein `Guest` hält eine Liste eigener Buchungen; jede `Booking` referenziert auf den `Guest`.  
+> - In `Booking.__init__()` wird automatisch ein eigenes `Invoice`-Objekt erzeugt (Komposition).  
+
+---
+
+### 3.2 Data Access Layer (DAL)
+
+- **`BaseDataAccess`**  
+  - Liest `os.environ["DB_FILE"]`, öffnet die SQLite-Verbindung.  
+  - Bietet Methoden `execute()`, `fetchone()`, `fetchall()`.
+
+- **CRUD-Klassen**  
+  - **`HotelDataAccess`**: `read_hotels_by_city()`, `read_hotel_by_id()`, etc.  
+  - **`RoomDataAccess`**: `read_rooms_by_hotel_id()`, `read_available_rooms()`, `read_room_by_id()`.  
+  - **`RoomTypeDataAccess`**, **`FacilityDataAccess`**: Jeweils CRUD für Zimmertypen und Ausstattung.  
+  - **`GuestDataAccess`**: `read_guest_by_id()`, `read_guest_by_email()`, `insert_guest()`, `read_all_guests()`.  
+  - **`BookingDataAccess`**: `insert_booking()`, `read_booking_by_id()`, `read_bookings_by_guest_id()`, `read_bookings_by_room()`, `cancel_booking()`.  
+  - **`InvoiceDataAccess`**: `insert_invoice()`, `read_invoice_by_id()`, `read_invoice_by_booking_id()`.
+
+Jede DAL-Klasse führt SQL-Statements aus und übersetzt Zeilen in Model-Objekte. So bleibt die Geschäftslogik (BLL) unabhängig von SQLite-Syntax.
+
+---
+
+### 3.3 Business Logic Layer (BLL)
+
+| **Manager-Klasse**   | **Verantwortung**                                                                                                                                                                                             |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **HotelManager**     | Filtern von Hotels nach Stadt, Sternen, Verfügbarkeit; Koordinierung von `RoomDataAccess` – liefert `Room`-Objekte als Antwort.                                                                                |
+| **GuestManager**     | Validiert Eingaben (Vor-/Nachname, E-Mail), Erstellung & Abfrage von Gästen über `GuestDataAccess`.                                                                                                             |
+| **BookingManager**   | Erstellt neue Buchungen (`insert_booking`), listet Buchungen pro Gast (`read_bookings_by_guest_id`), storniert Buchungen und markiert deren Invoice.                                                            |
+| **InvoiceManager**   | Generiert Rechnungen für abgeschlossene oder stornierte Buchungen: Berechnung des Betrags, Anlegen in DB, Laden über `InvoiceDataAccess`.                                                                       |
+| **PricingManager**   | Berechnet dynamische Preise: Basispreis = `base_price_per_night * nights`, ergänzt um saisonale Auf- oder Abschläge (z. B. Sommeraufschlag, Winterrabatt).                                                       |
+
+---
+
+### 3.4 UI Layer
+
+- **`run.py`** – Hauptskript mit Konsolen-Menü:  
+  1. Kopiert beim Start `hotel_reservation_sample.db` → `working_hotel.db` (via `shutil.copyfile`).  
+  2. Setzt `os.environ["DB_FILE"] = "database/working_hotel.db"`.  
+  3. Importiert und initialisiert Manager:  
+     ```python
+     from business_logic.hotel_manager import HotelManager
+     from business_logic.guest_manager import GuestManager
+     from business_logic.booking_manager import BookingManager
+     from business_logic.invoice_manager import InvoiceManager
+     from business_logic.pricing_manager import PricingManager
+     ```
+  4. Zeigt ein Hauptmenü (US 1–8) an, liest die Wahl, und ruft dynamisch die passende User Story auf:  
+     ```python
+     choice = input_valid_int("Menüpunkt wählen (1–8): ", 1, 8)
+     run_user_story(choice)
+     ```
+  5. Nutzt Helper-Funktionen aus `ui/input_helper.py` und `ui/validation_helper.py` für konsistente Konsoleneingaben.
+
+- **Helper-Module**  
+  - **`ui/input_helper.py`**: Eingabe-Funktionen mit Validierung (ganze Zahlen, Strings, Ja/Nein, E-Mail).  
+  - **`ui/validation_helper.py`**: Reguläre Ausdrücke für `is_valid_email()` und `is_valid_name()`.
+
+---
+
+## 4. User Stories – Überblick
+
+### 4.1 Einfache User Stories (1.x – 4.x)
+
+Einfacher Ablauf im System:
+
+1. **US 1.1** – Hotels in Stadt anzeigen  
+2. **US 1.2** – Hotels in Stadt mit Mindeststernen anzeigen  
+3. **US 1.3** – Hotels in Stadt mit Zimmern für X Gäste anzeigen  
+4. **US 1.4** – Hotels in Stadt nach Verfügbarkeit (Check-in/Check-out) durchsuchen  
+5. **US 1.5** – Kombination: Stadt + Sterne + Gäste + Datum (Filterkombi)  
+6. **US 1.6** – Detaillierte Hotelinformationen (Ausstattung, Adresse, Sterne)  
+7. **US 2.x/3.x** – Zimmertypen und Ausstattung anzeigen  
+8. **US 4** – Zimmer buchen  
+
+> Diese Stories liefen über einfache SQL-Abfragen im DAL und direktes Mapping in Model-Objekte; die Geschäftslogik war geradlinig und ohne größere Schichtgrenzen-Probleme umsetzbar.
+
+---
+
+### 4.2 Komplexe User Stories: US 5, US 6 & US 7
+
+Wir beschreiben hier nur die komplexen Abläufe – die übrigen US sind vergleichsweise unkompliziert.
+
+#### US 5: Rechnung nach Aufenthalt erstellen
+
+- **Ziel:**  
+  Gast möchte nach abgeschlossenem Aufenthalt eine Rechnung erhalten, um einen Zahlungsnachweis zu haben.
+
+- **Ablauf im System:**  
+  1. Gast gibt E-Mail-Adresse ein (`input_helper.input_valid_email`).  
+  2. `GuestManager.read_guest_by_email(email)` liefert `Guest`-Objekt.  
+  3. `BookingManager.get_bookings_for_guest(guest)` filtert nur abgeschlossene Buchungen (`check_out_date < heute` und `is_cancelled == False`).  
+  4. UI zeigt eine Liste dieser Buchungen; Gast wählt eine Buchung.  
+  5. `InvoiceManager.generate_invoice(booking)` wird aufgerufen:  
+     - Berechnung des Rechnungsbetrags:  
+       ```python
+       total = (
+           booking.calculate_total_price()
+           if hasattr(booking, "calculate_total_price")
+           else booking.total_amount
+       )
+       ```
+     - Setzen des Ausstellungsdatums:  
+       ```python
+       issue_date = date.today()
+       ```
+     - Anlegen der Rechnung in DB:  
+       ```python
+       new_id = self.__invoice_da.insert_invoice(
+           booking.booking_id,
+           issue_date,
+           total
+       )
+       ```
+     - Laden des neuen `Invoice`-Objekts via `read_invoice_by_id(new_id)` und Rückgabe.  
+  6. Ausgabe in UI:  
+     ```
+     Rechnung für Buchung 7: Datum 2025-05-10, Betrag 760.00 CHF
+     ```
+
+> **Hinweis zur Umsetzung:**  
+> - Wir mussten sicherstellen, dass das Datenbankschema eine Tabelle `invoice( invoice_id INTEGER PK, booking_id INTEGER, issue_date TEXT, total_amount REAL )` enthält.  
+> - Die Methode `InvoiceDataAccess.read_invoice_by_id()` durfte nur die Parameter `(invoice_id, booking, issue_date, total_amount)` übergeben, da der `Invoice`-Konstruktor genau **drei** Argumente erwartet (ohne `invoice_id`).  
+> - Zuvor führte ein fehlerhaftes Mapping zu:  
+>   ```text
+>   TypeError: Invoice.__init__() takes 4 positional arguments but 5 were given
+>   ```
+
+---
+
+#### US 6: Buchung stornieren & Storno-Rechnung generieren
+
+- **Ziel:**  
+  Gast möchte eine bestehende Buchung stornieren, damit diese nicht belastet wird. Gleichzeitig soll eine Storno-Rechnung (Negativ-Rechnung) erstellt werden.
+
+- **Ablauf im System:**  
+  1. Gast gibt E-Mail-Adresse ein.  
+  2. `GuestManager.read_guest_by_email(email)` → `Guest`.  
+  3. `BookingManager.get_bookings_for_guest(guest)` filtert nur aktuelle, nicht stornierte Buchungen (`is_cancelled == False`).  
+  4. UI zeigt eine Liste aktiver Buchungen; Gast wählt eine aus.  
+  5. `BookingManager.cancel_booking(booking_id)` wird aufgerufen:  
+     - In DB:  
+       ```sql
+       UPDATE booking
+         SET is_cancelled = 1
+       WHERE booking_id = ?
+       ```
+     - Auf Objektebene:  
+       ```python
+       booking.is_cancelled = True
+       booking.cancel()    # setzt booking.invoice = None
+       ```
+  6. `InvoiceManager.generate_invoice(booking)` wird erneut aufgerufen und erzeugt eine “Storno-Rechnung”:  
+     - Berechnet den Saldo (z. B. negativer Betrag bzw. Zwischensumme).  
+     - Speichert in `invoice`-Tabelle.  
+     - Gibt das neue `Invoice`-Objekt zurück.  
+  7. UI zeigt:  
+     ```
+     Buchung 7 storniert. Stornorechnung #12 erstellt.
+     ```
+
+> **Herausforderung:**  
+> - Wir mussten verhindern, dass beim Stornieren dieselbe Rechnung erneut verwendet wird. Daher haben wir in `Booking.cancel()` das Feld `self.__invoice` auf `None` gesetzt.  
+> - Initiale Fehler: falscher Aufruf des `Invoice`-Konstruktors, fehlender Import von `BookingDataAccess` in `InvoiceDataAccess`, fehlendes `datetime.fromisoformat()` → `TypeError: fromisoformat: argument must be str`.  
+
+---
+
+#### US 7: Dynamische Preisgestaltung
+
+- **Ziel:**  
+  Gast möchte dynamisch gestaltete Preise sehen, damit er je nach Saison den besten Tarif bucht.
+
+- **Ablauf im System:**  
+  1. Gast wählt Hotel, Check-in/Check-out-Daten und Anzahl Gäste.  
+  2. `HotelManager.get_available_rooms(hotel_id, check_in, check_out)` liefert Liste `Room`-Objekte.  
+  3. In UI wird für jedes Zimmer `PricingManager.calculate_price(room_id, check_in, check_out, guests)` aufgerufen:  
+     - Liest `room = RoomDataAccess.read_room_by_id(room_id)`.  
+     - `nights = (check_out – check_in).days`.  
+     - Basispreis = `room.price_per_night * nights`.  
+     - **Saisonaler Auf-/Abschlag:**  
+       ```python
+       if check_in.month in [6, 7, 8]:
+           price *= 1.10  # Sommeraufschlag 10%
+       elif check_in.month in [12, 1, 2]:
+           price *= 0.90  # Winterrabatt 10%
+       ```
+     - Wenn `guests > room.room_type.max_guests` → Fehler: „Zu viele Gäste“.  
+     - Gerundeter Endpreis: `round(price, 2)`.  
+  4. UI zeigt Tabelle mit dynamischen Preisen:
+     ```
+     | Zimmernummer | Basispreis/Nacht | Dynamischer Gesamtpreis |
+     |--------------|------------------|-------------------------|
+     | 101          |  250.00 CHF      |     1’150.00 CHF        |
+     | 102          |  400.00 CHF      |     1’848.00 CHF        |
+     ```
+  5. Gast bucht Zimmer zum angezeigten dynamischen Preis.
+
+> **Hinweis:**  
+> - Die Saisonalitätslogik orientiert sich an simplen Monatsbereichen (Sommer: Juni–August, Winter: Dezember–Februar).  
+> - Ein längerer Mehrfachaufenthaltsrabatt (z. B. 10 % ab 5 Nächten) wurde im Code entfernt, um den Ablauf kurz zu halten.  
+
+---
+
+## 5. Herausforderungen & Lessons Learned
+
+1. **Layer-Grenzen & Imports**  
+   - Häufig vergaßen wir, Klassen aus einer anderen Schicht zu importieren (z. B. `BookingDataAccess` in `InvoiceDataAccess` oder `Room` in `Booking`).  
+   - Um zirkuläre Importe zu vermeiden, haben wir in manchen Methoden lokale Imports genutzt und sorgfältig auf korrekte Paketpfade geachtet.
+
+2. **Model `Invoice` vs. Datenbank-Schema**  
+   - Der `Invoice`-Konstruktor (`__init__(self, booking, issue_date, total_amount)`) war auf genau drei Argumente ausgelegt – ohne `invoice_id`.  
+   - Anfangs wurde versehentlich `invoice_id` mitkonstruiert, was zu:  
+     ```
+     TypeError: Invoice.__init__() takes 4 positional arguments but 5 were given
+     ```  
+     führte.  
+   - Lösung: In `InvoiceDataAccess.read_invoice_by_id()` nur `(inv_id, booking, issue_date, total_amount)` an `Invoice()` übergeben und `invoice_id` nicht im Konstruktor erwarten.
+
+3. **Datenbankmigration & Dump**  
+   - Nach Schemaänderungen (z. B. Hinzufügen der Tabelle `invoice`) haben wir:  
+     1. In SQLite-Editor (VSCode-Extension) die neuen `CREATE TABLE`-Statements ausgeführt.  
+     2. Unter **Export → SQL Schema** den Dump als `dump.sql` im Ordner `database/` gespeichert.  
+     3. In `run.py` kopieren wir `hotel_reservation_sample.db` nach `working_hotel.db`, damit Änderungen sofort in Tests genutzt werden.
+
+4. **Storno-Logik (US 6)**  
+   - Auf Objektebene (`Booking.cancel()`) und in der Datenbank (`UPDATE booking SET is_cancelled = 1`) synchronisieren.  
+   - Alte Rechnung musste auf Objektebene auf `None` gesetzt werden, damit keine veraltete Rechnung weiterverwendet wird.
+
+5. **Probleme bei mehreren US**  
+   - Ähnliche Schichtgrenzen-/Import-Probleme traten auch bei US 5 und US 7 auf – z. B. falsche Parameteranzahl, fehlende `datetime`-Imports, Namensinkonsistenzen.  
+   - Beispiel US 6: In `InvoiceDataAccess.read_invoice_by_id()` vergessen, `from data_access.booking_data_access import BookingDataAccess` zu importieren, was zu  
+     ```
+     NameError: name 'BookingDataAccess' is not defined
+     ```  
+     führte.  
+
+6. **Team-Kollaboration & GitHub-Workflow**  
+   - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was Konflikte verursachte.  
+   - Wir haben rasch gelernt, Feature-Branches zu nutzen und regelmäßig `git pull --rebase` durchzuführen.  
+   - Code-Reviews und Pull-Request-Merges stellten sicher, dass nur fehlerfreier Code in `main` gelangt.
+
+---
+
+## 6. VSCode & Datenbank-Handling
+
+1. **Öffnen der Datenbank**  
+   - Installiere in VSCode das Extension-Paket **„SQLite Viewer“**.  
+   - Klicke auf `database/hotel_reservation_sample.db`, um Tabelleninhalte zu inspizieren und eigene SQL-Abfragen auszuführen (Fenster unten rechts: **QUERY RESULTS**).
+
+2. **Schema aktualisieren mit `dump.sql`**  
+   - Wenn Du `dump.sql` angepasst hast (z. B. neue Tabellen oder Spalten), öffne VSCode-Terminal oder den SQL-Editor der Extension und führe aus:  
+     ```sql
+     .read database/dump.sql
+     ```  
+   - Dadurch werden sämtliche `CREATE TABLE` und DDL-Statements im aktiven DB-Kontext ausgeführt.
+
+3. **Working Copy in `run.py`**  
+   - Bei jedem Start von `run.py` wird `hotel_reservation_sample.db` nach `working_hotel.db` kopiert.  
+   - Änderungen an `hotel_reservation_sample.db` werden so beim nächsten Ausführen von `run.py` automatisch in `working_hotel.db` übernommen.
+
+---
+
+## 7. Ausblick & weitere Ideen
+
+- **Echtzeit-Zahlungsintegration:** Anbindung an eine Payment-API (z. B. Stripe), um Rechnungen real abzuwickeln und Zahlungen sofort zu verarbeiten.  
+- **Web-Frontend:** Umstellung von Konsolenmenü auf eine Web­App (Flask oder FastAPI), um Benutzerfreundlichkeit und optische Oberfläche zu verbessern.  
+- **Erweiterte Preislogik:** Nutzung von Marktdaten oder Auslastungskennzahlen für wirklich „intelligente“ dynamische Preise.  
+- **Logging & Internationalisierung:** Detaillierte Protokollierung (Logging) und mehrsprachige Texte (i18n) für erweiterten Einsatz.
+
+---
+
+> **Vielen Dank fürs Lesen!**  
+> Dieses README bietet einen kompakten Überblick über Architektur, Aufgabenteilung und technische Entscheidungen. Weitere Details zu Klassen, Methoden und SQL-Statements finden sich im Quellcode in den jeweiligen Layer-Ordnern.  
+
+
+
+
 
