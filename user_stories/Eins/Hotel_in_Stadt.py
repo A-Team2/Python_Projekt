@@ -19,7 +19,22 @@ def run(hotel_manager: HotelManager):
         if hotels:
             print(f"\nGefundene Hotels in {city}:")
             for i, hotel in enumerate(hotels, start=1):
-                print(f" {i}. {hotel.name}, {hotel.address.get_full_address()} ({hotel.stars} Sterne)")
+                print(f" {i}. {hotel.name}")
+            # Menü zur Hotelauswahl
+            auswahl = None
+            while auswahl is None:
+                try:
+                    auswahl = input_helper.input_valid_int(f"\nNummer eines Hotels auswählen (1-{len(hotels)}): ", min_value=1, max_value=len(hotels))
+                except input_helper.EmptyInputError:
+                    print("Abbruch.")
+                    return
+                except ValueError as err:
+                    print("Fehler:", err)
+            hotel = hotels[auswahl-1]
+            print(f"\nDetails zu '{hotel.name}':")
+            print(f"Adresse: {hotel.address.get_full_address()}")
+            print(f"Sterne: {hotel.stars}")
+            # Hier ggf. weitere Details ergänzen (z.B. Zimmer, Ausstattungen)
         else:
             print(f"Keine Hotels in {city} gefunden.")
     else:
