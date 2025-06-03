@@ -14,7 +14,7 @@ def run(hotel_manager):
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # 2. Check-in-Datum
     if not cancel:

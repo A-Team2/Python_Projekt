@@ -25,7 +25,7 @@ def run(hotel_manager: HotelManager):
             print("Vorgang abgebrochen.")
             return
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # 2. Adressdaten abfragen
     while True:
@@ -38,7 +38,7 @@ def run(hotel_manager: HotelManager):
             print("Vorgang abgebrochen.")
             return
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # 3. Adresse anlegen
     address_manager = AddressManager()

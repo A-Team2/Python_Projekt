@@ -13,7 +13,7 @@ def run(hotel_manager: HotelManager):
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # 2. Gästeanzahl eingeben
     if not cancel:
@@ -23,7 +23,7 @@ def run(hotel_manager: HotelManager):
             except input_helper.EmptyInputError:
                 cancel = True
             except ValueError as err:
-                print("Fehler:", err)
+                print(err)
 
     # 3. Hotels anzeigen, die passende Zimmer anbieten
     if city and guest_count is not None:

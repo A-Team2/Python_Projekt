@@ -23,7 +23,7 @@ def run(hotel_manager=None):
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     if cancel:
         print("Vorgang abgebrochen.")

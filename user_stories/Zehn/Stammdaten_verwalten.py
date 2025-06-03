@@ -145,8 +145,8 @@ def edit_description(hotel: Hotel) -> bool:
                 min_length=10
             )
             break
-        except ValueError:
-            print("Fehler: Die Beschreibung muss mindestens 10 Zeichen lang sein. Bitte erneut eingeben.")
+        except ValueError as err:
+            print(err)
     hotel.description = new_desc
     return True
 

@@ -13,7 +13,7 @@ def run(hotel_manager):
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # Sternefilter
     if not cancel:
@@ -23,7 +23,7 @@ def run(hotel_manager):
             except input_helper.EmptyInputError:
                 cancel = True
             except ValueError as err:
-                print("Fehler:", err)
+                print(err)
 
     # Gästeanzahl
     if not cancel:
@@ -33,7 +33,7 @@ def run(hotel_manager):
             except input_helper.EmptyInputError:
                 cancel = True
             except ValueError as err:
-                print("Fehler:", err)
+                print(err)
 
     # Check-in-Datum
     if not cancel:
