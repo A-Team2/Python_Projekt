@@ -52,9 +52,7 @@ class Booking:
         for room in rooms:
             self.add_room(room)
 
-        # Composition: Invoice erstellen  
-        self.__invoice: Invoice = Invoice(self, issue_date=check_out_date, total_amount=total_amount)
-
+        
     def __repr__(self) -> str:
         return (
             f"Booking(id={self.__booking_id!r}, guest={self.__guest!r}, "
@@ -127,9 +125,7 @@ class Booking:
         if room in self.__rooms:
             self.__rooms.remove(room)
 
-    @property
-    def invoice(self) -> Invoice:
-        return self.__invoice
+    
 
     def get_booking_details(self) -> str:
         # Gibt eine kurze Zusammenfassung dieser Buchung zurück.
