@@ -18,10 +18,18 @@ def run(hotel_manager):
             print(f"\nHotels in {city}:")
             for i, h in enumerate(hotels, start=1):
                 print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
-            idx = input_helper.input_valid_int(
-                "Wählen Sie ein Hotel (Nummer): ",
-                min_value=1, max_value=len(hotels)
-            )
+            # Hotelauswahl in einer Schleife
+            idx = None
+            while idx is None:
+                try:
+                    idx = input_helper.input_valid_int(
+                        "Wählen Sie ein Hotel (Nummer): ",
+                        min_value=1, max_value=len(hotels)
+                    )
+                except input_helper.EmptyInputError:
+                    print("Fehler: Bitte geben Sie eine Zahl ein.")
+                except ValueError as err:
+                    print(err)
             hotel = hotels[idx-1]
         except input_helper.EmptyInputError:
             cancel = True
