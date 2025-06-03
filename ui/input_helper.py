@@ -10,12 +10,13 @@ class YesOrNo(Enum):
 
 # Eigene Ausnahme für leere Eingaben
 class EmptyInputError(ValueError):
-    pass
+    def __init__(self, message="Eingabe darf nicht leer sein."):
+        super().__init__(message)
 
 # Eigene Ausnahme für Werte außerhalb des zulässigen Bereichs
 class OutOfRangeError(ValueError):
     def __init__(self, value, min_value, max_value):
-        super().__init__(f"Input {value} is out of range ({min_value} to {max_value}).")
+        super().__init__(f"Fehler: Eingabe {value} ist ungültig. Bitte einen Wert zwischen {min_value} und {max_value} eingeben.")
         self.value = value
         self.min_value = min_value
         self.max_value = max_value
@@ -23,7 +24,7 @@ class OutOfRangeError(ValueError):
 # Eigene Ausnahme für ungültige Zeichenkettenlängen
 class StringLengthError(ValueError):
     def __init__(self, value, min_length, max_length):
-        super().__init__(f"Input '{value}' must be between {min_length} and {max_length} characters long.")
+        super().__init__(f"Eingabe zu kurz. Bitte mindestens {min_length} Zeichen eingeben.")
         self.value = value
         self.min_length = min_length
         self.max_length = max_length
@@ -43,13 +44,13 @@ def input_valid_int(prompt: str, min_value: int = -sys.maxsize, max_value: int =
     user_input = input(prompt).strip()
     if user_input == "":
         if default is None:
-            raise EmptyInputError("Input cannot be empty.")
+            raise EmptyInputError("Eingabe darf nicht leer sein.")
         return default
 
     try:
         value = int(user_input)
     except ValueError as err:
-        raise ValueError("Invalid input. Please enter a valid number.") from err
+        raise ValueError("Fehler: Ungültige Eingabe. Bitte eine gültige Zahl eingeben.") from err
 
     if value < min_value or value > max_value:
         raise OutOfRangeError(value, min_value, max_value)
@@ -64,13 +65,13 @@ def input_valid_float(prompt: str,
     user_input = input(prompt).strip()
     if user_input == "":
         if default is None:
-            raise EmptyInputError("Input cannot be empty.")
+            raise EmptyInputError("Eingabe darf nicht leer sein.")
         return default
 
     try:
         value = float(user_input)
     except ValueError as err:
-        raise ValueError("Invalid input. Please enter a valid float number.") from err
+        raise ValueError("Fehler: Ungültige Eingabe. Bitte eine gültige Kommazahl eingeben.") from err
 
     if value < min_value or value > max_value:
         raise OutOfRangeError(value, min_value, max_value)
@@ -79,8 +80,8 @@ def input_valid_float(prompt: str,
 
 # Verarbeitet Ja-/Nein-Eingaben mit optionalem Standardwert
 def input_y_n(prompt: str, default: YesOrNo = None) -> bool:
-    y = ['y', 'yes']
-    n = ['n', 'no']
+    y = ['y', 'yes', 'j', 'ja']
+    n = ['n', 'no', 'nein']
 
     user_input = input(prompt).strip().lower()
     if user_input in y:
@@ -90,7 +91,7 @@ def input_y_n(prompt: str, default: YesOrNo = None) -> bool:
     elif user_input == "" and default is not None:
         return bool(default.value)
     else:
-        raise ValueError("Invalid input. Please enter 'y' or 'n'.")
+        raise ValueError("Fehler: Ungültige Eingabe. Bitte 'ja' oder 'nein' eingeben.")
 
 def input_valid_date(prompt: str, min_date: date = None, max_date: date = None, compare_date: date = None, compare_type: str = None) -> date:
     while True:
@@ -118,4 +119,4 @@ def input_valid_date(prompt: str, min_date: date = None, max_date: date = None, 
                     continue
             return parsed_date
         except ValueError:
-            print("Ungültiges Datum. Bitte im Format JJJJ-MM-TT eingeben.")
+            print("Fehler: Ungültiges Datum. Bitte im Format JJJJ-MM-TT eingeben.")

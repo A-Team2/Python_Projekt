@@ -13,7 +13,7 @@ def run(hotel_manager: HotelManager):
         except input_helper.EmptyInputError:
             cancel = True
         except ValueError as err:
-            print("Fehler:", err)
+            print(err)
 
     # 2. Mindeststerne eingeben
     if not cancel:
@@ -23,7 +23,7 @@ def run(hotel_manager: HotelManager):
             except input_helper.EmptyInputError:
                 cancel = True
             except ValueError as err:
-                print("Fehler:", err)
+                print(err)
 
     # 3. Wenn Eingabe gültig: Hotels suchen
     if city and min_stars is not None:
