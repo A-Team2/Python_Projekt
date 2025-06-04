@@ -9,8 +9,7 @@ Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python�
 
 Das System ermöglicht es Gästen, nach verfügbaren Hotels und Zimmern zu suchen, Buchungen anzulegen, zu stornieren und nach einem Aufenthalt Rechnungen zu erhalten. Gleichzeitig bietet es Administratoren Einsicht in sämtliche Buchungen.
 
-- **Programmiersprache:** Python 3  
-- **Datenbank:** SQLite  
+- **Ziel:** Ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte der Python-Programmierung abbildet.  
 - **IDE:** Visual Studio Code  
 - **Versionskontrolle & Kollaboration:** GitHub  
 - **Architektur (Schichtenmodell):**  
@@ -47,7 +46,7 @@ Die Architektur ist in klassische Schichten (Layers) gegliedert. Jeder Layer hat
 
 ### 3.1 Model Layer (Domänenklassen)
 
-Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystems abgebildet. Jede Klasse entspricht einer Entität aus dem ER‐Schema und enthält nur jene Attribute und Methoden, die für das Geschäftsverständnis nötig sind. Dabei war unser Ziel, ein robustes, wartbares Design zu erstellen, ohne zu sehr ins Detail der einzelnen Getter/Setter zu gehen – denn ausführliche Erklärungen befinden sich in unserem Deepnote-Dokument.
+Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystems abgebildet. Jede Klasse entspricht einer Entität aus dem ER‐Schema und enthält nur jene Attribute und Methoden, die für das Geschäftsverständnis nötig sind.
 
 - **Hotel**  
   Ein `Hotel` hat einen Namen, eine Sternebewertung und eine Adresse. Aus programmtechnischer Sicht kapselt die Klasse die internen Eigenschaften („private Attributes“), und über Methoden wie `add_room()` und `remove_room()` verwalten wir die Zimmerliste. So ist garantiert, dass ein `Room` immer nur einem Hotel zugeordnet sein kann und umgekehrt.
@@ -162,7 +161,7 @@ Einfacher Ablauf im System:
 4. **US 1.4** – Hotels in Stadt nach Verfügbarkeit (Check-in/Check-out) durchsuchen  
 5. **US 1.5** – Kombination: Stadt + Sterne + Gäste + Datum (Filterkombi)  
 6. **US 1.6** – Detaillierte Hotelinformationen (Ausstattung, Adresse, Sterne)  
-7. **US 2.x/3.x** – Zimmertypen und Ausstattung anzeigen  
+7. **US 2.x/3.x** – Zimmertypen und Ausstattung anzeigen und Hotels bearbeiten (entfernen, hinzufügen)
 8. **US 4** – Zimmer buchen  
 
 > Diese Stories liefen über einfache SQL-Abfragen im DAL und direktes Mapping in Model-Objekte; die Geschäftslogik war geradlinig und ohne größere Schichtgrenzen-Probleme umsetzbar.
@@ -171,127 +170,91 @@ Einfacher Ablauf im System:
 
 ### 4.2 Komplexe User Stories: US 5, US 6 & US 7
 
-Wir beschreiben hier nur die komplexen Abläufe – die übrigen US sind vergleichsweise unkompliziert.
+Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die tiefergehende technische Umsetzung (SQL-Statements, genaue Klassenmethoden etc.) findet sich in unserem Deepnote-Notebook.
 
-#### US 5: Rechnung nach Aufenthalt erstellen
+---
+
+#### US 5 – Rechnung nach Aufenthalt erstellen
 
 - **Ziel:**  
-  Gast möchte nach abgeschlossenem Aufenthalt eine Rechnung erhalten, um einen Zahlungsnachweis zu haben.
+  Nach Abschluss eines Aufenthalts möchte der Gast eine Rechnung (Zahlungsnachweis) erhalten.
 
-- **Ablauf im System:**  
-  1. Gast gibt E-Mail-Adresse ein (`input_helper.input_valid_email`).  
-  2. `GuestManager.read_guest_by_email(email)` liefert `Guest`-Objekt.  
-  3. `BookingManager.get_bookings_for_guest(guest)` filtert nur abgeschlossene Buchungen (`check_out_date < heute` und `is_cancelled == False`).  
-  4. UI zeigt eine Liste dieser Buchungen; Gast wählt eine Buchung.  
-  5. `InvoiceManager.generate_invoice(booking)` wird aufgerufen:  
-     - Berechnung des Rechnungsbetrags:  
-       ```python
-       total = (
-           booking.calculate_total_price()
-           if hasattr(booking, "calculate_total_price")
-           else booking.total_amount
-       )
-       ```
-     - Setzen des Ausstellungsdatums:  
-       ```python
-       issue_date = date.today()
-       ```
-     - Anlegen der Rechnung in DB:  
-       ```python
-       new_id = self.__invoice_da.insert_invoice(
-           booking.booking_id,
-           issue_date,
-           total
-       )
-       ```
-     - Laden des neuen `Invoice`-Objekts via `read_invoice_by_id(new_id)` und Rückgabe.  
-  6. Ausgabe in UI:  
+- **Konzepte & Ablauf:**  
+  1. **E-Mail validieren:** Die UI fragt via `input_helper` nach einer gültigen E-Mail.  
+  2. **Gast laden:** `GuestManager.read_guest_by_email(email)` holt das `Guest`-Objekt. Ist keine Buchung vorhanden, wird eine Fehlermeldung angezeigt.  
+  3. **Abgeschlossene Buchungen filtern:**  
+     - Mit `BookingManager.get_bookings_for_guest(guest)` werden alle Buchungen des Gastes geholt.  
+     - Anschließend filtert die UI nur die Buchungen heraus, deren `check_out_date` in der Vergangenheit liegt und die nicht storniert wurden.  
+  4. **Rechnung erzeugen:**  
+     - Der Gast wählt eine abgeschlossene Buchung aus der Liste.  
+     - `InvoiceManager.generate_invoice(booking)` legt einen neuen Datensatz in der Tabelle `invoice` an (mit Feldern `booking_id`, `issue_date`, `total_amount`).  
+     - Intern wird der Rechnungsbetrag berechnet (entweder über `booking.calculate_total_price()` oder direkt `booking.total_amount`) und das Ausstellungsdatum (`date.today()`) gesetzt.  
+  5. **Anzeige:** Die UI zeigt dem Gast anschließend die generierte Rechnung, z. B.:  
      ```
      Rechnung für Buchung 7: Datum 2025-05-10, Betrag 760.00 CHF
      ```
 
 > **Hinweis zur Umsetzung:**  
-> - Wir mussten sicherstellen, dass das Datenbankschema eine Tabelle `invoice( invoice_id INTEGER PK, booking_id INTEGER, issue_date TEXT, total_amount REAL )` enthält.  
-> - Die Methode `InvoiceDataAccess.read_invoice_by_id()` durfte nur die Parameter `(invoice_id, booking, issue_date, total_amount)` übergeben, da der `Invoice`-Konstruktor genau **drei** Argumente erwartet (ohne `invoice_id`).  
-> - Zuvor führte ein fehlerhaftes Mapping zu:  
->   ```text
->   TypeError: Invoice.__init__() takes 4 positional arguments but 5 were given
->   ```
+> - Wichtig war, dass die `invoice`-Tabelle nur genau die Spalten `invoice_id`, `booking_id`, `issue_date` (TEXT), `total_amount` (REAL) enthält, weil unser `Invoice`-Konstruktor keine zusätzliche `invoice_id` als Argument erwartet.  
+> - Ein früheres Mapping-Problem führte zu einem `TypeError`, weil wir zu viele Parameter an `Invoice.__init__()` übergeben hatten. Dieses Mapping wurde im DAL korrigiert.
 
 ---
 
-#### US 6: Buchung stornieren & Storno-Rechnung generieren
+#### US 6 – Buchung stornieren
 
 - **Ziel:**  
-  Gast möchte eine bestehende Buchung stornieren, damit diese nicht belastet wird. Gleichzeitig soll eine Storno-Rechnung (Negativ-Rechnung) erstellt werden.
+  Ein Gast möchte eine eigene Buchung stornieren, wenn er das Zimmer nicht mehr benötigt. Gleichzeitig soll eine (Storno-)Rechnung angelegt werden.
 
-- **Ablauf im System:**  
-  1. Gast gibt E-Mail-Adresse ein.  
-  2. `GuestManager.read_guest_by_email(email)` → `Guest`.  
-  3. `BookingManager.get_bookings_for_guest(guest)` filtert nur aktuelle, nicht stornierte Buchungen (`is_cancelled == False`).  
-  4. UI zeigt eine Liste aktiver Buchungen; Gast wählt eine aus.  
-  5. `BookingManager.cancel_booking(booking_id)` wird aufgerufen:  
-     - In DB:  
-       ```sql
-       UPDATE booking
-         SET is_cancelled = 1
-       WHERE booking_id = ?
-       ```
-     - Auf Objektebene:  
-       ```python
-       booking.is_cancelled = True
-       booking.cancel()    # setzt booking.invoice = None
-       ```
-  6. `InvoiceManager.generate_invoice(booking)` wird erneut aufgerufen und erzeugt eine “Storno-Rechnung”:  
-     - Berechnet den Saldo (z. B. negativer Betrag bzw. Zwischensumme).  
-     - Speichert in `invoice`-Tabelle.  
-     - Gibt das neue `Invoice`-Objekt zurück.  
-  7. UI zeigt:  
-     ```
-     Buchung 7 storniert. Stornorechnung #12 erstellt.
-     ```
+- **Konzepte & Ablauf:**  
+  1. **Identifikation via E-Mail:** Die UI fragt den Gast nach seiner E-Mail und zeigt anschließend alle aktiven (nicht stornierten, zukünftigen) Buchungen an.  
+  2. **Buchungsauswahl & Storno:**  
+     - Der Gast wählt eine Buchung aus, die storniert werden soll.  
+     - `BookingManager.cancel_booking(booking_id)` setzt intern das Flag `is_cancelled = True`.  
+     - Die zugehörige `Invoice`-Referenz im `Booking`-Objekt wird auf `None` gesetzt.  
+  3. **Storno-Rechnung erzeugen:**  
+     - Nach der Stornierung ruft die UI `InvoiceManager.generate_invoice(booking)` auf, um eine neue Rechnung (z. B. Gutschrift oder Storno-Quittung) in der Tabelle `invoice` anzulegen.  
+     - Die Rechnung verweist auf die stornierten Buchung und enthält das Ausstellungsdatum sowie den berechneten Betrag (meist 0 CHF oder ein Storno-Betrag).  
+  4. **Anzeige:** Die UI bestätigt dem Gast, dass die Buchung storniert und eine Storno-Rechnung angelegt wurde.
 
-> **Herausforderung:**  
-> - Wir mussten verhindern, dass beim Stornieren dieselbe Rechnung erneut verwendet wird. Daher haben wir in `Booking.cancel()` das Feld `self.__invoice` auf `None` gesetzt.  
-> - Initiale Fehler: falscher Aufruf des `Invoice`-Konstruktors, fehlender Import von `BookingDataAccess` in `InvoiceDataAccess`, fehlendes `datetime.fromisoformat()` → `TypeError: fromisoformat: argument must be str`.  
+> **Hinweis zur Umsetzung:**  
+> - Wir haben darauf geachtet, dass im `Booking`-Konstruktor standardmäßig eine `Invoice` erstellt wird (Komposition). Beim Storno (`Booking.cancel()`) wird dieses Invoice-Attribut auf `None` gesetzt.  
+> - Ein früherer Fehler war, dass wir versucht haben, eine `BookingDataAccess`-Instanz ohne Import zu verwenden. Dies wurde korrigiert, indem `BookingDataAccess` im DAL- und BLL-Code korrekt importiert wurde.  
+> - Außerdem trat ein `TypeError` auf, weil unser `Invoice`-Model nur drei Konstruktor-Parameter (ohne `invoice_id`) erwartet. Mit angepasstem DAL-Mapping war der Fehler behoben.
 
 ---
 
-#### US 7: Dynamische Preisgestaltung
+#### US 7 – Dynamische Preisgestaltung anzeigen
 
 - **Ziel:**  
-  Gast möchte dynamisch gestaltete Preise sehen, damit er je nach Saison den besten Tarif bucht.
+  Gäste sollen basierend auf Saisonzeiten unterschiedliche Preise sehen, um immer den besten Tarif zu wählen.
 
-- **Ablauf im System:**  
-  1. Gast wählt Hotel, Check-in/Check-out-Daten und Anzahl Gäste.  
-  2. `HotelManager.get_available_rooms(hotel_id, check_in, check_out)` liefert Liste `Room`-Objekte.  
-  3. In UI wird für jedes Zimmer `PricingManager.calculate_price(room_id, check_in, check_out, guests)` aufgerufen:  
-     - Liest `room = RoomDataAccess.read_room_by_id(room_id)`.  
-     - `nights = (check_out – check_in).days`.  
-     - Basispreis = `room.price_per_night * nights`.  
-     - **Saisonaler Auf-/Abschlag:**  
-       ```python
-       if check_in.month in [6, 7, 8]:
-           price *= 1.10  # Sommeraufschlag 10%
-       elif check_in.month in [12, 1, 2]:
-           price *= 0.90  # Winterrabatt 10%
-       ```
-     - Wenn `guests > room.room_type.max_guests` → Fehler: „Zu viele Gäste“.  
-     - Gerundeter Endpreis: `round(price, 2)`.  
-  4. UI zeigt Tabelle mit dynamischen Preisen:
+- **Konzepte & Ablauf:**  
+  1. **Zeitraum und Gästezahl erfragen:** Die UI fragt nach Check-in, Check-out und Anzahl Personen.  
+  2. **Verfügbare Zimmer laden:** `HotelManager.get_available_rooms(hotel_id, check_in, check_out)` liefert alle freien `Room`-Objekte.  
+  3. **Preisberechnung:** Im `PricingManager.calculate_price(room_id, check_in, check_out, guests)` wird:  
+     - Die Aufenthaltsdauer berechnet: `(check_out - check_in).days`.  
+     - Der Grundpreis: `room.price_per_night * nights`.  
+     - **Saisonalität:**  
+       - **Hochsaison (Juni–August):** + 20 % zum Basispreis.  
+       - **Nebensaison (November–Februar):** – 10 % zum Basispreis.  
+       - Standard: Basispreis beibehalten.  
+  4. **Anzeige:** Die UI zeigt pro Zimmernummer den dynamisch berechneten Gesamtpreis an, z. B.:  
      ```
-     | Zimmernummer | Basispreis/Nacht | Dynamischer Gesamtpreis |
-     |--------------|------------------|-------------------------|
-     | 101          |  250.00 CHF      |     1’150.00 CHF        |
-     | 102          |  400.00 CHF      |     1’848.00 CHF        |
+     Zimmer 102: Basis 400 CHF/Nacht → 4 Nächte = 1600 CHF (Hochsaison-Aufschlag) → Endpreis 1920 CHF
      ```
-  5. Gast bucht Zimmer zum angezeigten dynamischen Preis.
 
-> **Hinweis:**  
-> - Die Saisonalitätslogik orientiert sich an simplen Monatsbereichen (Sommer: Juni–August, Winter: Dezember–Februar).  
-> - Ein längerer Mehrfachaufenthaltsrabatt (z. B. 10 % ab 5 Nächten) wurde im Code entfernt, um den Ablauf kurz zu halten.  
+> **Hinweis zur Umsetzung:**  
+> - In unserem Deepnote-Notebook sind die genauen Monatsbereiche (z. B. `if check_in.month in [6,7,8]:`) und die Prozentrechnungen dokumentiert.  
+> - Wir haben bewusst darauf verzichtet, jeden möglichen Sonderfall (Wechsel von Saison-Mitgliedsjahren, Feiertage) abzubilden, da der Prototyp vor allem die dynamische Grundidee demonstrieren soll.  
 
 ---
+
+#### Reflexion zu US 5, US 6 & US 7
+
+- Bei allen drei Stories war die enge Zusammenarbeit zwischen DAL, BLL und UI besonders wichtig.  
+- Immer wieder sind wir an „Layer-Grenzen“ gescheitert, z. B. wenn in einer BLL-Methode ein falscher DAL-Import fehlte oder wenn Model-Konstruktoren nicht exakt zu den SQL-Resultaten passten.  
+- **Beispiel US 6:** Ein `TypeError` („`Invoice.__init__() takes 4 positional arguments but 5 were given`“) zeigte, dass unser DAL zunächst zu viele Felder an den `Invoice`-Konstruktor weiterreichte.  
+- Solche Probleme traten auch in US 5 (falsches Mapping von Datumstypen) und US 7 (falsche Monatsbereiche) auf.
 
 ## 5. Herausforderungen & Lessons Learned
 
