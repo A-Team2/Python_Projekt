@@ -3,6 +3,7 @@ from business_logic.guest_manager import GuestManager
 from business_logic.booking_manager import BookingManager
 from business_logic.invoice_manager import InvoiceManager
 from ui.validation_helper import is_valid_email
+from datetime import date
 
 def run():
     gm = GuestManager()
@@ -40,7 +41,7 @@ def run():
 
     # 3) Alle offenen Buchungen holen
     bookings = bm.get_bookings_for_guest(guest)
-    open_bookings = [b for b in bookings if not b.is_cancelled]
+    open_bookings = [b for b in bookings if not b.is_cancelled and b.check_out_date > date.today()]
     if not open_bookings:
         print("Keine aktiven Buchungen zum Stornieren.")
         return

@@ -17,9 +17,10 @@ def run():
             print("  Keine Buchungen.")
         else:
             for b in bookings:
+                status = "Storniert" if getattr(b, 'is_cancelled', False) else "Aktiv"
                 if hasattr(b, 'rooms') and b.rooms:
                     for room in b.rooms:
-                        print(f"  Buchung: Hotel {room.hotel.name}, Zimmer {room.room_number}, {b.check_in_date} bis {b.check_out_date}")
+                        print(f"  Buchung: Hotel {room.hotel.name}, Zimmer {room.room_number}, {b.check_in_date} bis {b.check_out_date} [Status: {status}]")
                 else:
-                    print(f"  Buchung: (keine Zimmerdaten geladen), {b.check_in_date} bis {b.check_out_date}")
+                    print(f"  Buchung: (keine Zimmerdaten geladen), {b.check_in_date} bis {b.check_out_date} [Status: {status}]")
         print() 
