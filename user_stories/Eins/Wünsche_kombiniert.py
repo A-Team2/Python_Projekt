@@ -1,3 +1,5 @@
+from ui import input_helper
+
 def run(hotel_manager):
     city = None
     min_stars = None
@@ -65,5 +67,3 @@ def run(hotel_manager):
             print("Keine passenden Hotels gefunden.")
     else:
         print("Vorgang abgebrochen.")
-
-from ui import input_helper

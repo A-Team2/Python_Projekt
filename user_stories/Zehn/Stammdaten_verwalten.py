@@ -19,121 +19,144 @@ def show_hotel_menu(hotel: Hotel):
 def edit_room_types(hotel: Hotel) -> bool:
     print("\n=== Zimmertypen bearbeiten ===")
     room_types = hotel.get_room_types()
-    
     if not room_types:
         print("Keine Zimmertypen vorhanden.")
         return False
-        
     print("\nVorhandene Zimmertypen:")
     for i, rt in enumerate(room_types, 1):
         print(f"{i}. {rt.description} - Max. Gäste: {rt.max_guests}")
-    
-    idx = input_helper.input_valid_int(
-        "Welchen Zimmertyp möchten Sie bearbeiten? (0 für zurück): ",
-        min_value=0, max_value=len(room_types)
-    )
-    
+    while True:
+        try:
+            idx = input_helper.input_valid_int(
+                "Welchen Zimmertyp möchten Sie bearbeiten? (0 für zurück): ",
+                min_value=0, max_value=len(room_types)
+            )
+            break
+        except Exception as err:
+            print(f"Fehler: {err}")
     if idx == 0:
         return False
-        
     room_type = room_types[idx-1]
-    
-    print("\nWas möchten Sie ändern?")
-    print("1. Beschreibung")
-    print("2. Maximale Gästeanzahl")
-    print("0. Zurück")
-    
-    choice = input_helper.input_valid_int(
-        "Ihre Wahl: ",
-        min_value=0, max_value=2
-    )
-    
-    if choice == 0:
-        return False
-        
-    if choice == 1:
-        new_desc = input_helper.input_valid_string(
-            "Neue Beschreibung: ",
-            min_length=3
-        )
-        room_type.description = new_desc
-    elif choice == 2:
-        new_max = input_helper.input_valid_int(
-            "Neue maximale Gästeanzahl: ",
-            min_value=1, max_value=10
-        )
-        room_type.max_guests = new_max
-        
-    return True
+    while True:
+        print("\nWas möchten Sie ändern?")
+        print("1. Beschreibung")
+        print("2. Maximale Gästeanzahl")
+        print("0. Zurück")
+        try:
+            choice = input_helper.input_valid_int(
+                "Ihre Wahl: ",
+                min_value=0, max_value=2
+            )
+        except Exception as err:
+            print(f"Fehler: {err}")
+            continue
+        if choice == 0:
+            return False
+        if choice == 1:
+            while True:
+                try:
+                    new_desc = input_helper.input_valid_string(
+                        "Neue Beschreibung: ",
+                        min_length=3
+                    )
+                    room_type.description = new_desc
+                    break
+                except Exception as err:
+                    print(f"Fehler: {err}")
+        elif choice == 2:
+            while True:
+                try:
+                    new_max = input_helper.input_valid_int(
+                        "Neue maximale Gästeanzahl: ",
+                        min_value=1, max_value=10
+                    )
+                    room_type.max_guests = new_max
+                    break
+                except Exception as err:
+                    print(f"Fehler: {err}")
+        return True
 
 def edit_facilities(hotel: Hotel) -> bool:
     print("\n=== Einrichtungen bearbeiten ===")
     all_facilities = hotel.get_all_facilities()
-    
     if not all_facilities:
         print("Keine Einrichtungen vorhanden.")
         return False
-        
     print("\nVorhandene Einrichtungen:")
     for i, fac in enumerate(all_facilities, 1):
         print(f"{i}. {fac.facility_name}")
-    
-    print("\nWas möchten Sie tun?")
-    print("1. Neue Einrichtung hinzufügen")
-    print("2. Einrichtung entfernen")
-    print("0. Zurück")
-    
-    choice = input_helper.input_valid_int(
-        "Ihre Wahl: ",
-        min_value=0, max_value=2
-    )
-    
-    if choice == 0:
-        return False
-        
-    if choice == 1:
-        new_facility = input_helper.input_valid_string(
-            "Name der neuen Einrichtung: ",
-            min_length=3
-        )
-        hotel.add_facility(Facility(new_facility))
-    elif choice == 2:
-        idx = input_helper.input_valid_int(
-            "Welche Einrichtung soll entfernt werden? (0 für zurück): ",
-            min_value=0, max_value=len(all_facilities)
-        )
-        if idx > 0:
-            hotel.remove_facility(all_facilities[idx-1])
-            
-    return True
+    while True:
+        print("\nWas möchten Sie tun?")
+        print("1. Neue Einrichtung hinzufügen")
+        print("2. Einrichtung entfernen")
+        print("0. Zurück")
+        try:
+            choice = input_helper.input_valid_int(
+                "Ihre Wahl: ",
+                min_value=0, max_value=2
+            )
+        except Exception as err:
+            print(f"Fehler: {err}")
+            continue
+        if choice == 0:
+            return False
+        if choice == 1:
+            while True:
+                try:
+                    new_facility = input_helper.input_valid_string(
+                        "Name der neuen Einrichtung: ",
+                        min_length=3
+                    )
+                    hotel.add_facility(Facilities(new_facility))
+                    break
+                except Exception as err:
+                    print(f"Fehler: {err}")
+        elif choice == 2:
+            while True:
+                try:
+                    idx = input_helper.input_valid_int(
+                        "Welche Einrichtung soll entfernt werden? (0 für zurück): ",
+                        min_value=0, max_value=len(all_facilities)
+                    )
+                    if idx == 0:
+                        break
+                    hotel.remove_facility(all_facilities[idx-1])
+                    break
+                except Exception as err:
+                    print(f"Fehler: {err}")
+        return True
 
 def edit_prices(hotel: Hotel) -> bool:
     print("\n=== Preise bearbeiten ===")
     rooms = hotel.rooms
-    
     if not rooms:
         print("Keine Zimmer vorhanden.")
         return False
-        
     print("\nVorhandene Zimmer:")
     for i, room in enumerate(rooms, 1):
         print(f"{i}. {room.room_type.description} - {room.price_per_night} CHF/Nacht")
-    
-    idx = input_helper.input_valid_int(
-        "Welches Zimmer möchten Sie bearbeiten? (0 für zurück): ",
-        min_value=0, max_value=len(rooms)
-    )
-    
+    while True:
+        try:
+            idx = input_helper.input_valid_int(
+                "Welches Zimmer möchten Sie bearbeiten? (0 für zurück): ",
+                min_value=0, max_value=len(rooms)
+            )
+            break
+        except Exception as err:
+            print(f"Fehler: {err}")
     if idx == 0:
         return False
-        
     room = rooms[idx-1]
-    new_price = input_helper.input_valid_float(
-        "Neuer Preis pro Nacht (CHF): ",
-        min_value=0.0
-    )
-    room.price_per_night = new_price
-    
+    while True:
+        try:
+            new_price = input_helper.input_valid_float(
+                "Neuer Preis pro Nacht (CHF): ",
+                min_value=0.0
+            )
+            room.price_per_night = new_price
+            break
+        except Exception as err:
+            print(f"Fehler: {err}")
     return True
 
 def edit_description(hotel: Hotel) -> bool:
@@ -144,33 +167,41 @@ def edit_description(hotel: Hotel) -> bool:
                 "Neue Beschreibung: ",
                 min_length=10
             )
+            hotel.description = new_desc
             break
-        except ValueError as err:
-            print(err)
-    hotel.description = new_desc
+        except Exception as err:
+            print(f"Fehler: {err}")
     return True
 
 def edit_address(hotel: Hotel) -> bool:
     print("\n=== Adresse bearbeiten ===")
-    street = input_helper.input_valid_string("Straße: ", min_length=3)
-    house_number = input_helper.input_valid_string("Hausnummer: ", min_length=1)
-    zip_code = input_helper.input_valid_string("PLZ: ", min_length=4)
-    city = input_helper.input_valid_string("Stadt: ", min_length=2)
-    
-    hotel.address.street = street
-    hotel.address.house_number = house_number
-    hotel.address.zip_code = zip_code
-    hotel.address.city = city
-    
+    while True:
+        try:
+            street = input_helper.input_valid_string("Straße: ", min_length=3)
+            house_number = input_helper.input_valid_string("Hausnummer: ", min_length=1)
+            zip_code = input_helper.input_valid_string("PLZ: ", min_length=4)
+            city = input_helper.input_valid_string("Stadt: ", min_length=2)
+            hotel.address.street = street
+            hotel.address.house_number = house_number
+            hotel.address.zip_code = zip_code
+            hotel.address.city = city
+            break
+        except Exception as err:
+            print(f"Fehler: {err}")
     return True
 
 def edit_stars(hotel: Hotel) -> bool:
     print("\n=== Sterne bearbeiten ===")
-    new_stars = input_helper.input_valid_int(
-        "Neue Anzahl Sterne (1-5): ",
-        min_value=1, max_value=5
-    )
-    hotel.stars = new_stars
+    while True:
+        try:
+            new_stars = input_helper.input_valid_int(
+                "Neue Anzahl Sterne (1-5): ",
+                min_value=1, max_value=5
+            )
+            hotel.stars = new_stars
+            break
+        except Exception as err:
+            print(f"Fehler: {err}")
     return True
 
 def run(hotel_manager: HotelManager):

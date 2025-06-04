@@ -153,3 +153,12 @@ class RoomDataAccess(BaseDataAccess):
         # (Hier ggf. weitere Lösch-Logik für Facilities/Buchungen ergänzen)
         sql = "DELETE FROM Room WHERE room_id = ?"
         self.execute(sql, (room_id,))
+
+    def create_room(self, hotel_id: int, room_number: int, price_per_night: float, type_id: int) -> int:
+        sql = """
+        INSERT INTO Room (hotel_id, room_number, price_per_night, type_id)
+        VALUES (?, ?, ?, ?)
+        """
+        params = (hotel_id, room_number, price_per_night, type_id)
+        last_id, _ = self.execute(sql, params)
+        return int(last_id)

@@ -82,13 +82,6 @@ class Room:
     def hotel(self) -> Hotel:
         # Gibt das zugehörige Hotel zurück
         return self.__hotel
-    
-    @hotel.setter
-    def hotel(self, hotel: Hotel) -> None:
-        if not isinstance(hotel, Hotel):
-            raise ValueError("hotel must be a Hotel instance")
-        self.__hotel = hotel
-
 
     @hotel.setter
     def hotel(self, hotel: Hotel) -> None:
@@ -101,7 +94,7 @@ class Room:
             self.__hotel = hotel
             # Füge neue Relation hinzu, falls das Hotel nicht None ist und das Zimmer noch nicht enthalten ist.
             if hotel is not None and self not in hotel.rooms:
-                 hotel.add_room(self)
+                hotel.add_room(self)
 
     @property
     def room_type(self) -> RoomType:

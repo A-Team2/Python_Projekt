@@ -4,8 +4,8 @@ from model.room_type import RoomType
 class RoomTypeDataAccess(BaseDataAccess):
     def read_all_room_types(self) -> list[RoomType]:
         sql = """
-        SELECT room_type_id, name, description
-        FROM room_type
+        SELECT type_id, description, max_guests
+        FROM Room_Type
         """
         rows = self.fetchall(sql)
         return [RoomType(*row) for row in rows]

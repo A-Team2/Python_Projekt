@@ -43,6 +43,7 @@ def show_menu():
     print("18. Stammdaten verwalten (US 10)")
     print("19. Alle Hotels anzeigen")
     print("20. Alle Gäste und Buchungen anzeigen")
+    print("21. Zimmer zu Hotel hinzufügen")
     print("0. Beenden")
     print("================================")
 
@@ -127,6 +128,10 @@ def run_user_story(choice):
         print("\n👤 Alle Gäste und Buchungen anzeigen")
         from user_stories.Alle_Gaeste_und_Buchungen_anzeigen import run
         run()
+    elif choice == 21:
+        print("\n➕ Zimmer zu Hotel hinzufügen")
+        from user_stories.Hotel_Zimmer_hinzufuegen import run
+        run(hotel_manager)
     else:
         print("Ungültige Auswahl!")
         
@@ -134,7 +139,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-20): ", min_value=0, max_value=20)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-21): ", min_value=0, max_value=21)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break
