@@ -138,9 +138,11 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
      ```
   4. Zeigt ein Hauptmenü (US 1–8) an, liest die Wahl, und ruft dynamisch die passende User Story auf:  
      ```python
-     choice = input_valid_int("Menüpunkt wählen (1–8): ", 1, 8)
+     choice = input_valid_int("Menüpunkt wählen (1–18): ", 1, 18)
      run_user_story(choice)
      ```
+  Der genaue und gesamte Code ist in unserem run.py File im VSCode zu finden.
+
   5. Nutzt Helper-Funktionen aus `ui/input_helper.py` und `ui/validation_helper.py` für konsistente Konsoleneingaben.
 
 - **Helper-Module**  
