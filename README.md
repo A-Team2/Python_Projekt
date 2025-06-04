@@ -286,7 +286,7 @@ Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die ti
      ```  
      führte.
 
-Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Probleme waren, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch andere Errors die es zu lösen gab, jedoch wäre es zu viel alle aufzulisten.
+Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Problemen hatten, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch einige andere Errors die es zu lösen gab, jedoch wäre es zu viel und nicht zielführend alle aufzulisten.
 
 5. **Team-Kollaboration & GitHub-Workflow**  
    - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was Konflikte verursachte.  
