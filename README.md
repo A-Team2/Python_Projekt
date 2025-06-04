@@ -136,7 +136,7 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
      from business_logic.invoice_manager import InvoiceManager
      from business_logic.pricing_manager import PricingManager
      ```
-  4. Zeigt ein Hauptmenü (US 1–8) an, liest die Wahl, und ruft dynamisch die passende User Story auf:  
+  4. Zeigt ein Hauptmenü (US 1–10) an, liest die Wahl, und ruft dynamisch die passende User Story auf:  
      ```python
      choice = input_valid_int("Menüpunkt wählen (1–18): ", 1, 18)
      run_user_story(choice)
