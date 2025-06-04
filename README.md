@@ -284,7 +284,9 @@ Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die ti
      ```
      NameError: name 'BookingDataAccess' is not defined
      ```  
-     führte.  
+     führte.
+
+Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Probleme waren, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch andere Errors die es zu lösen gab, jedoch wäre es zu viel alle aufzulisten.
 
 5. **Team-Kollaboration & GitHub-Workflow**  
    - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was Konflikte verursachte.  
