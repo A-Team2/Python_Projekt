@@ -13,10 +13,17 @@ def run(hotel_manager: HotelManager):
         print(f"\nHotels in {city}:")
         for i, h in enumerate(hotels, start=1):
             print(f" {i}. {h.name} — {h.address.get_full_address()} ({h.stars} Sterne)")
-        idx = input_helper.input_valid_int(
-            "Welches Hotel möchten Sie aktualisieren (Nummer): ",
-            min_value=1, max_value=len(hotels)
-        )
+        idx = None
+        while idx is None:
+            try:
+                idx = input_helper.input_valid_int(
+                    "Welches Hotel möchten Sie aktualisieren (Nummer): ",
+                    min_value=1, max_value=len(hotels)
+                )
+            except input_helper.EmptyInputError:
+                print("Fehler: Bitte geben Sie eine Zahl ein.")
+            except ValueError as err:
+                print(err)
         hotel = hotels[idx-1]
 
         # 2. Auswahl, was geändert werden soll
@@ -25,7 +32,14 @@ def run(hotel_manager: HotelManager):
         print("2. Sterne")
         print("3. Adresse")
         print("0. Abbrechen")
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-3): ", min_value=0, max_value=3)
+        choice = None
+        while choice is None:
+            try:
+                choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-3): ", min_value=0, max_value=3)
+            except input_helper.EmptyInputError:
+                print("Fehler: Bitte geben Sie eine Zahl ein.")
+            except ValueError as err:
+                print(err)
         if choice == 0:
             print("Vorgang abgebrochen.")
             return
@@ -46,22 +60,30 @@ def run(hotel_manager: HotelManager):
             new_address = Address(hotel.address.address_id, street, city, zip_code)
 
         # 3. Änderungen speichern?
-        confirm = input_helper.input_valid_string(
-            "Möchten Sie die Änderungen speichern? (ja/nein): ", min_length=2
-        ).strip().lower()
+        while True:
+            confirm = input_helper.input_valid_string(
+                "Möchten Sie die Änderungen speichern? (ja/nein): ", min_length=2
+            ).strip().lower()
+            if confirm in ("ja", "nein"):
+                break
+            print("Bitte geben Sie 'ja' oder 'nein' ein.")
         if confirm != "ja":
             print("Änderungen verworfen.")
         else:
             try:
                 hotel_manager.update_hotel(hotel.hotel_id, new_name, new_stars, new_address)
-                print("\n✅ Hotel wurde erfolgreich aktualisiert.")
+                print("\n Hotel wurde erfolgreich aktualisiert.")
             except Exception as err:
                 print("Fehler beim Aktualisieren des Hotels:", err)
 
         # 4. Noch ein Hotel aktualisieren?
-        again = input_helper.input_valid_string(
-            "Möchten Sie ein weiteres Hotel aktualisieren? (ja/nein): ", min_length=2
-        ).strip().lower()
+        while True:
+            again = input_helper.input_valid_string(
+                "Möchten Sie ein weiteres Hotel aktualisieren? (ja/nein): ", min_length=2
+            ).strip().lower()
+            if again in ("ja", "nein"):
+                break
+            print("Bitte geben Sie 'ja' oder 'nein' ein.")
         if again != "ja":
             print("Vorgang beendet.")
             break 
