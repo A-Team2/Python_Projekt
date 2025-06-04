@@ -147,3 +147,9 @@ class RoomDataAccess(BaseDataAccess):
         for facility in facilities:
             room.add_facility(facility)
         return room
+
+    def delete_room(self, room_id: int) -> None:
+        # Zuerst alle Buchungen und ggf. Facilities zum Zimmer löschen (wegen Foreign Keys)
+        # (Hier ggf. weitere Lösch-Logik für Facilities/Buchungen ergänzen)
+        sql = "DELETE FROM Room WHERE room_id = ?"
+        self.execute(sql, (room_id,))
