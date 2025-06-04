@@ -2,6 +2,7 @@ from ui import input_helper
 from business_logic.hotel_manager import HotelManager
 from business_logic.address_manager import AddressManager
 from model.address import Address
+from ui.validation_helper import valid_street
 
 def run(hotel_manager: HotelManager):
     print("=== Neues Hotel zum System hinzufügen ===")

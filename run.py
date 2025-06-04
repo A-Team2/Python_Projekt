@@ -35,9 +35,14 @@ def show_menu():
     print("10. Hotel entfernen (US 3.2)")
     print("11. Hotel aktualisieren (US 3.3)")
     print("12. Zimmer buchen (US 4)")
+    print("13. Rechnung nach Aufenthalt erstellen (US 5)")
+    print("14. Buchung stornieren (US 6)")
+    print("15. Dynamischen Zimmerpreis berechnen (US 7)")
+    print("16. Alle Buchungen anzeigen (US 8)")
     print("17. Zimmer mit Ausstattung anzeigen (US 9)")
     print("18. Stammdaten verwalten (US 10)")
     print("19. Alle Hotels anzeigen")
+    print("20. Alle Gäste und Buchungen anzeigen")
     print("0. Beenden")
     print("================================")
 
@@ -118,6 +123,10 @@ def run_user_story(choice):
         print("\n🏨 Alle Hotels anzeigen")
         from user_stories.Alle_Hotels_anzeigen import run
         run(hotel_manager)
+    elif choice == 20:
+        print("\n👤 Alle Gäste und Buchungen anzeigen")
+        from user_stories.Alle_Gaeste_und_Buchungen_anzeigen import run
+        run()
     else:
         print("Ungültige Auswahl!")
         
@@ -125,7 +134,7 @@ def run_user_story(choice):
 while True:
     show_menu()
     try:
-        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-19): ", min_value=0, max_value=19)
+        choice = input_helper.input_valid_int("Bitte wählen Sie eine Option (0-20): ", min_value=0, max_value=20)
         if choice == 0:
             print("\nProgramm wird beendet. Auf Wiedersehen!")
             break
