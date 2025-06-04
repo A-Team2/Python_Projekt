@@ -47,39 +47,68 @@ Die Architektur ist in klassische Schichten (Layers) gegliedert. Jeder Layer hat
 
 ### 3.1 Model Layer (Domänenklassen)
 
-| **Klasse**     | **Beschreibung**                                                                                                                                                                                                |
-|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Hotel**      | Enthält `hotel_id`, `name`, `stars`, `address: Address`, `rooms: list[Room]`<br>Methoden: `add_room()`, `remove_room()` – bidirektionale Assoziation mit `Room`.                                               |
-| **Room**       | Enthält `room_id`, `room_number`, `price_per_night`, `hotel: Hotel`, `room_type: RoomType`<br>Methoden: `is_available(check_in, check_out)`, `add_booking()`, `remove_booking()`.                              |
-| **RoomType**   | Enthält `type_id`, `description`, `max_guests` – Klassifizierung eines Zimmertyps (z. B. Suite, Single).                                                                                                           |
-| **Facilities** | Enthält `facility_id`, `name` – m:n-Beziehung über Zwischentabelle `room_facilities`.                                                                                                                          |
-| **Guest**      | Enthält `guest_id`, `first_name`, `last_name`, `email`, `address: Address`, `bookings: list[Booking]`<br>Methoden: `add_booking()`, `remove_booking()`.                                                             |
-| **Booking**    | Enthält `booking_id`, `check_in_date: date`, `check_out_date: date`, `guest: Guest`, `rooms: list[Room]`, `total_amount: float`, `is_cancelled: bool`, `invoice: Invoice`<br>Methoden: `cancel()`, `get_booking_details()`. |
-| **Invoice**    | Enthält `booking: Booking`, `issue_date: date`, `total_amount: float` – jede Buchung erzeugt eine Rechnung (Komposition).<br>Methoden: `get_invoice_details()`.                                                    |
-| **Address**    | Enthält `address_id`, `street`, `city`, `zip_code` – wird von `Hotel` und `Guest` genutzt, um Adressdaten zu konsolidieren.                                                                                    |
+Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystems abgebildet. Jede Klasse entspricht einer Entität aus dem ER‐Schema und enthält nur jene Attribute und Methoden, die für das Geschäftsverständnis nötig sind. Dabei war unser Ziel, ein robustes, wartbares Design zu erstellen, ohne zu sehr ins Detail der einzelnen Getter/Setter zu gehen – denn ausführliche Erklärungen befinden sich in unserem Deepnote-Dokument.
 
-> **Assoziationen & Kompositionen**  
-> - `Hotel ↔ Room`: Ein Hotel hält eine Liste von `Room`-Objekten; jedes `Room` verweist auf sein `Hotel`.  
-> - `Guest ↔ Booking`: Ein `Guest` hält eine Liste eigener Buchungen; jede `Booking` referenziert auf den `Guest`.  
-> - In `Booking.__init__()` wird automatisch ein eigenes `Invoice`-Objekt erzeugt (Komposition).  
+- **Hotel**  
+  Ein `Hotel` hat einen Namen, eine Sternebewertung und eine Adresse. Aus programmtechnischer Sicht kapselt die Klasse die internen Eigenschaften („private Attributes“), und über Methoden wie `add_room()` und `remove_room()` verwalten wir die Zimmerliste. So ist garantiert, dass ein `Room` immer nur einem Hotel zugeordnet sein kann und umgekehrt.
+
+- **Room**  
+  Jeder `Room` gehört zu genau einem `Hotel` und hat eine Zimmernummer sowie einen Basispreis pro Nacht. Außerdem besitzt ein Zimmer genau einen `RoomType` (z. B. „Standard“, „Suite“). Ganz wichtig: Die Methode `is_available(check_in, check_out)` prüft anhand aller bestehenden Buchungen, ob der Zeitraum frei ist. Neu hinzukommende Buchungen werden in der Buchungsliste des Raumes abgelegt.
+
+- **RoomType**  
+  Diese Klasse dient dazu, Zimmertypen (z. B. „Doppelzimmer Deluxe“ oder „Einzelzimmer Economy“) zentral zu beschreiben. Ein `RoomType` enthält eine Kurzbeschreibung (Text) und eine maximale Personenzahl. So können wir später leicht überprüfen, ob zu viele Gäste für einen bestimmten Zimmertyp angefragt wurden.
+
+- **Facilities**  
+  Einige Hotels bieten Zusatzleistungen oder Ausstattungsmerkmale (z. B. „WLAN“, „Fitnessraum“ oder „Frühstück inklusive“) an. Um diese m:n‐Beziehung abzubilden, verwalten wir in der Klasse `Facilities` die einzelnen Ausstattungs‐Einträge und nutzen in der Datenbank eine Zwischentabelle `room_facilities`. In den Objekten halten wir einfach eine Liste aller `Facilities`, die einem Zimmer zugeordnet sind.
+
+- **Guest**  
+  Ein `Guest` steht für einen Hotelgast mit Vorname, Nachname, E-Mail und Adresse. Außerdem verwaltet er eine Liste aller eigenen Buchungen (`bookings`). Immer, wenn eine neue `Booking` für diesen Gast erzeugt wird, ruft der Konstruktor intern `guest.add_booking(thisBooking)` auf, damit die Assoziation bidirektional bleibt.
+
+- **Booking**  
+  Eine `Booking` verbindet genau einen `Guest` mit einem oder mehreren `Room`‐Objekten. In der Buchung speichern wir Anreisedatum, Abreisedatum, den Gesamtpreis (`total_amount`) und ein Flag `is_cancelled`, falls die Buchung storniert wurde. Direkt beim Erzeugen einer Buchung wird automatisch ein `Invoice`‐Objekt angelegt (Komposition). So ist garantiert, dass jede abgeschlossene Buchung‐Instanz genau eine Rechnung besitzt.
+
+- **Invoice**  
+  Eine `Invoice` enthält das Ausstellungsdatum und den Gesamtbetrag zu einer Buchung. Technisch ist sie fest an eine `Booking` gebunden („Komposition“), sodass bei Löschung einer Buchung auch die zugehörige Rechnung verschwindet. Wir haben uns bewusst entschieden, den Konstruktor so einfach wie möglich zu halten: Er nimmt nur die schon existierende `Booking`, das Datum und den Betrag entgegen, prüft die Gültigkeit und speichert die Werte.
+
+- **Address**  
+  Um Redundanzen zu vermeiden, haben wir eine eigene `Address`‐Klasse modelliert (Straße, Stadt, Postleitzahl). Sowohl ein `Hotel` als auch ein `Guest` referenzieren auf exakt ein `Address`‐Objekt. So können wir später Adressen wiederverwenden oder zentral ändern, ohne in jeder Klasse mehrfach Textdaten pflegen zu müssen.
+
+
+
+
+
 
 ---
 
-### 3.2 Data Access Layer (DAL)
+## 3.2 Data Access Layer (DAL)
 
-- **`BaseDataAccess`**  
-  - Liest `os.environ["DB_FILE"]`, öffnet die SQLite-Verbindung.  
-  - Bietet Methoden `execute()`, `fetchone()`, `fetchall()`.
+Der Data Access Layer bündelt alle SQLite-Zugriffe und sorgt dafür, dass die Geschäftslogik (BLL) keine SQL-Syntax kennt. Unsere Überlegungen:
 
-- **CRUD-Klassen**  
-  - **`HotelDataAccess`**: `read_hotels_by_city()`, `read_hotel_by_id()`, etc.  
-  - **`RoomDataAccess`**: `read_rooms_by_hotel_id()`, `read_available_rooms()`, `read_room_by_id()`.  
-  - **`RoomTypeDataAccess`**, **`FacilityDataAccess`**: Jeweils CRUD für Zimmertypen und Ausstattung.  
-  - **`GuestDataAccess`**: `read_guest_by_id()`, `read_guest_by_email()`, `insert_guest()`, `read_all_guests()`.  
-  - **`BookingDataAccess`**: `insert_booking()`, `read_booking_by_id()`, `read_bookings_by_guest_id()`, `read_bookings_by_room()`, `cancel_booking()`.  
-  - **`InvoiceDataAccess`**: `insert_invoice()`, `read_invoice_by_id()`, `read_invoice_by_booking_id()`.
+- **Zentrales Basis-DAO (`BaseDataAccess`):**  
+  Liest beim Erstellen einer Verbindung immer die Umgebungsvariable `DB_FILE`, öffnet die SQLite-Datenbank und stellt drei grundlegende Methoden zur Verfügung:
+  - `execute(sql, params)`: Führt `INSERT`/`UPDATE`/`DELETE`-Statements aus.  
+  - `fetchone(sql, params)`: Liefert genau eine Ergebnis-Zeile.  
+  - `fetchall(sql, params)`: Liefert alle passenden Zeilen.  
 
-Jede DAL-Klasse führt SQL-Statements aus und übersetzt Zeilen in Model-Objekte. So bleibt die Geschäftslogik (BLL) unabhängig von SQLite-Syntax.
+- **Spezifische DAO-Klassen (CRUD):**  
+  Für jede Entität im Model–Layer gibt es genau eine DAO-Klasse, die nur für die dazugehörige Tabelle zuständig ist. Beispiele:
+  - **`HotelDataAccess` / `RoomDataAccess` / `RoomTypeDataAccess` / `FacilityDataAccess`:**  
+    ­ ­ Bieten Methoden zum Einlesen von Hotels, Räumen, Zimmertypen und Ausstattungen.  
+  - **`GuestDataAccess`:**  
+    ­ ­ Bietet `read_guest_by_id()`, `read_guest_by_email()`, `insert_guest()`, `read_all_guests()`.  
+  - **`BookingDataAccess`:**  
+    ­ ­ Unterstützt `insert_booking()`, `read_booking_by_id()`, `read_bookings_by_guest_id()`, `read_bookings_by_room()`, `cancel_booking()`.  
+  - **`InvoiceDataAccess`:**  
+    ­ ­ Kümmert sich um `insert_invoice()`, `read_invoice_by_id()`, `read_invoice_by_booking_id()`.  
+
+- **Wesentliche Designentscheidungen:**  
+  1. **Einzelverantwortung pro DAO:** Jeder DAO ist nur für eine Tabelle zuständig. So bleibt die SQL-Logik wirklich vollständig im DAL, und Änderungen am Schema betreffen nur eine Klasse.  
+  2. **Konvertierung zu Model-Objekten:** Bei `fetchone()` und `fetchall()` übersetzen wir die reinen Datenbank-Zeilen in Instanzen der Domänenklassen (z. B. `Hotel`, `Room`, `Booking`). Damit ist sichergestellt, dass der BLL-Layer ausschließlich mit Objekten arbeitet und nicht mit rohen Tupeln.  
+  3. **Keine Geschäftsregeln im DAL:** Validierungen wie „Ist der Gast wirklich ein `Guest`?“ oder „Sind Check-in und Check-out gültige Daten?“ werden komplett im BLL-Layer erledigt. Das DAL führt nur SQL aus und erstellt Model-Instanzen.  
+
+Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehalten wird und Änderungen im Datenbankschema (z. B. Hinzufügen einer neuen Spalte) nur minimale Anpassungen im DAL erfordern.  
+
+
 
 ---
 
