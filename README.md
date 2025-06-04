@@ -271,17 +271,12 @@ Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die ti
      führte.  
    - Lösung: In `InvoiceDataAccess.read_invoice_by_id()` nur `(inv_id, booking, issue_date, total_amount)` an `Invoice()` übergeben und `invoice_id` nicht im Konstruktor erwarten.
 
-3. **Datenbankmigration & Dump**  
-   - Nach Schemaänderungen (z. B. Hinzufügen der Tabelle `invoice`) haben wir:  
-     1. In SQLite-Editor (VSCode-Extension) die neuen `CREATE TABLE`-Statements ausgeführt.  
-     2. Unter **Export → SQL Schema** den Dump als `dump.sql` im Ordner `database/` gespeichert.  
-     3. In `run.py` kopieren wir `hotel_reservation_sample.db` nach `working_hotel.db`, damit Änderungen sofort in Tests genutzt werden.
 
-4. **Storno-Logik (US 6)**  
+3. **Storno-Logik (US 6)**  
    - Auf Objektebene (`Booking.cancel()`) und in der Datenbank (`UPDATE booking SET is_cancelled = 1`) synchronisieren.  
    - Alte Rechnung musste auf Objektebene auf `None` gesetzt werden, damit keine veraltete Rechnung weiterverwendet wird.
 
-5. **Probleme bei mehreren US**  
+4. **Probleme bei mehreren US**  
    - Ähnliche Schichtgrenzen-/Import-Probleme traten auch bei US 5 und US 7 auf – z. B. falsche Parameteranzahl, fehlende `datetime`-Imports, Namensinkonsistenzen.  
    - Beispiel US 6: In `InvoiceDataAccess.read_invoice_by_id()` vergessen, `from data_access.booking_data_access import BookingDataAccess` zu importieren, was zu  
      ```
@@ -289,40 +284,14 @@ Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die ti
      ```  
      führte.  
 
-6. **Team-Kollaboration & GitHub-Workflow**  
+5. **Team-Kollaboration & GitHub-Workflow**  
    - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was Konflikte verursachte.  
    - Wir haben rasch gelernt, Feature-Branches zu nutzen und regelmäßig `git pull --rebase` durchzuführen.  
    - Code-Reviews und Pull-Request-Merges stellten sicher, dass nur fehlerfreier Code in `main` gelangt.
 
 ---
 
-## 6. VSCode & Datenbank-Handling
 
-1. **Öffnen der Datenbank**  
-   - Installiere in VSCode das Extension-Paket **„SQLite Viewer“**.  
-   - Klicke auf `database/hotel_reservation_sample.db`, um Tabelleninhalte zu inspizieren und eigene SQL-Abfragen auszuführen (Fenster unten rechts: **QUERY RESULTS**).
-
-2. **Schema aktualisieren mit `dump.sql`**  
-   - Wenn Du `dump.sql` angepasst hast (z. B. neue Tabellen oder Spalten), öffne VSCode-Terminal oder den SQL-Editor der Extension und führe aus:  
-     ```sql
-     .read database/dump.sql
-     ```  
-   - Dadurch werden sämtliche `CREATE TABLE` und DDL-Statements im aktiven DB-Kontext ausgeführt.
-
-3. **Working Copy in `run.py`**  
-   - Bei jedem Start von `run.py` wird `hotel_reservation_sample.db` nach `working_hotel.db` kopiert.  
-   - Änderungen an `hotel_reservation_sample.db` werden so beim nächsten Ausführen von `run.py` automatisch in `working_hotel.db` übernommen.
-
----
-
-## 7. Ausblick & weitere Ideen
-
-- **Echtzeit-Zahlungsintegration:** Anbindung an eine Payment-API (z. B. Stripe), um Rechnungen real abzuwickeln und Zahlungen sofort zu verarbeiten.  
-- **Web-Frontend:** Umstellung von Konsolenmenü auf eine Web­App (Flask oder FastAPI), um Benutzerfreundlichkeit und optische Oberfläche zu verbessern.  
-- **Erweiterte Preislogik:** Nutzung von Marktdaten oder Auslastungskennzahlen für wirklich „intelligente“ dynamische Preise.  
-- **Logging & Internationalisierung:** Detaillierte Protokollierung (Logging) und mehrsprachige Texte (i18n) für erweiterten Einsatz.
-
----
 
 > **Vielen Dank fürs Lesen!**  
 > Dieses README bietet einen kompakten Überblick über Architektur, Aufgabenteilung und technische Entscheidungen. Weitere Details zu Klassen, Methoden und SQL-Statements finden sich im Quellcode in den jeweiligen Layer-Ordnern.  
