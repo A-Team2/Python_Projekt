@@ -27,7 +27,7 @@ Wir waren zu zweit im aktiven Kernteam und haben die Implementierung folgenderma
 
 | Teammitglied        | Zuständigkeiten                                                                                                                                         |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Gianluca (du)**   | Model Layer (Domänenklassen) & UI Layer (`input_helper.py`)                                              |
+| **Gianluca**   | Model Layer (Domänenklassen) & UI Layer (`input_helper.py`)                                              |
 | **Miro**            | Data Access Layer (SQLite-SQL, DA-Klassen) & UI Layer (`validation_helper.py`)                                                                                                            |
 | **Business Logic**  | Wurde passend zu den User Stories sukzessive zwischen uns beiden aufgeteilt und gemeinsam implementiert                                                 |
 
