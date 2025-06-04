@@ -296,7 +296,7 @@ Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die ti
 
 
 > **Vielen Dank fürs Lesen!**  
-> Dieses README bietet einen kompakten Überblick über Architektur, Aufgabenteilung und technische Entscheidungen. Weitere Details zu Klassen, Methoden und SQL-Statements finden sich im Quellcode in den jeweiligen Layer-Ordnern.  
+> Dieses README bietet einen kompakten Überblick über Architektur, Aufgabenteilung und technische Entscheidungen. Weitere Details zu Klassen, Methoden und SQL-Statements finden sich im Quellcode in den jeweiligen Layer-Ordnern, wie auch im Deepnote. 
 
 
 
