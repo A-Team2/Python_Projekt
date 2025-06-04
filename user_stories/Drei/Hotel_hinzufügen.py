@@ -28,11 +28,48 @@ def run(hotel_manager: HotelManager):
             print(err)
 
     # 2. Adressdaten abfragen
+    # Straße und Hausnummer in eigener Schleife
     while True:
         try:
-            street = input_helper.input_valid_string("Straße (mit Hausnummer): ", min_length=3)
-            city = input_helper.input_valid_string("Stadt: ", min_length=2)
-            zip_code = input_helper.input_valid_string("PLZ: ", min_length=2)
+            street_input = input_helper.input_valid_string("Strasse und Hausnummer (z.B. Sonnfeldweg 12): ", min_length=3)
+            parts = street_input.strip().split()
+            if len(parts) < 2:
+                print("Fehler: Bitte geben Sie Strasse und Hausnummer an (z.B. Sonnfeldweg 12).")
+                continue
+            street = " ".join(parts[:-1])
+            house_number = parts[-1]
+            if len(street.replace(' ', '')) < 3:
+                print("Fehler: Der Strassenname muss mindestens 3 Buchstaben lang sein.")
+                continue
+            street_full = f"{street} {house_number}"
+            break
+        except input_helper.EmptyInputError:
+            print("Vorgang abgebrochen.")
+            return
+        except ValueError as err:
+            print(err)
+
+    # Stadt in eigener Schleife
+    while True:
+        try:
+            city = input_helper.input_valid_string("Stadt: ", min_length=3)
+            if len(city.strip()) < 3:
+                print("Eingabe zu kurz. Bitte mindestens 3 Zeichen für die Stadt eingeben.")
+                continue
+            break
+        except input_helper.EmptyInputError:
+            print("Vorgang abgebrochen.")
+            return
+        except ValueError as err:
+            print(err)
+
+    # PLZ in eigener Schleife
+    while True:
+        try:
+            zip_code = input_helper.input_valid_string("PLZ: ", min_length=3)
+            if len(zip_code) < 3:
+                print("Eingabe zu kurz. Bitte mindestens 3 Zeichen eingeben.")
+                continue
             break
         except input_helper.EmptyInputError:
             print("Vorgang abgebrochen.")
@@ -42,9 +79,9 @@ def run(hotel_manager: HotelManager):
 
     # 3. Adresse anlegen
     address_manager = AddressManager()
-    address = Address(0, street, city, zip_code)
+    address = Address(0, street_full, city, zip_code)
     address_id = address_manager.create_address(address)
-    address = Address(int(address_id), street, city, zip_code)
+    address = Address(int(address_id), street_full, city, zip_code)
 
     # 4. Hotel anlegen
     try:
@@ -54,7 +91,7 @@ def run(hotel_manager: HotelManager):
         return
 
     # 5. Bestätigung und Hoteldetails anzeigen (ohne ID)
-    print("\n✅ Hotel erfolgreich hinzugefügt!")
+    print("\nHotel erfolgreich hinzugefügt!")
     print(f"Name: {new_hotel.name}")
     print(f"Sterne: {new_hotel.stars}")
     print(f"Adresse: {new_hotel.address.street}, {new_hotel.address.zip_code} {new_hotel.address.city}")
