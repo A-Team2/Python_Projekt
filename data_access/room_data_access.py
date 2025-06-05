@@ -162,19 +162,3 @@ class RoomDataAccess(BaseDataAccess):
         params = (hotel_id, room_number, price_per_night, type_id)
         last_id, _ = self.execute(sql, params)
         return int(last_id)
-    
-    def read_occupancy_by_room_type(self, hotel_id: int) -> list[tuple[str, int]]:
-        # Liefert für das gegebene Hotel (hotel_id) pro Zimmertyp (Room_Type.description)die Anzahl aktiver (nicht storniert) Buchungen zurück.
-        # Gibt eine Liste von Tupeln (description, belegung) zurück.
-        sql = """
-        SELECT rt.description, COUNT(b.booking_id) AS belegung
-          FROM Room r
-          JOIN Room_Type rt ON r.type_id = rt.type_id
-          LEFT JOIN Booking b
-            ON r.room_id = b.room_id
-           AND b.is_cancelled = 0
-          WHERE r.hotel_id = ?
-          GROUP BY rt.type_id
-        """
-        rows = self.fetchall(sql, (hotel_id,))
-        return [(description, int(belegung)) for description, belegung in rows]
