@@ -18,24 +18,20 @@ class AnalyticsDataAccess(BaseDataAccess):
                 rt.description,
                 COUNT(r.room_id) AS total_rooms,
                 SUM(CASE WHEN EXISTS (
+                SELECT 1
+                FROM Booking AS b
+                WHERE b.room_id = r.room_id
+                  AND b.is_cancelled = 0
+            ) THEN 1 ELSE 0 END) AS booked_rooms,
+            ROUND(
+                CAST(SUM(CASE WHEN EXISTS (
                     SELECT 1
-                    FROM Booking AS b
-                    WHERE b.room_id = r.room_id
-                      AND b.is_cancelled = 0
-                      AND b.check_in_date  < date('now')
-                      AND b.check_out_date > date('now')
-                ) THEN 1 ELSE 0 END) AS booked_rooms,
-                ROUND(
-                    CAST(SUM(CASE WHEN EXISTS (
-                        SELECT 1
-                        FROM Booking AS b2
-                        WHERE b2.room_id = r.room_id
-                          AND b2.is_cancelled = 0
-                          AND b2.check_in_date  < date('now')
-                          AND b2.check_out_date > date('now')
-                    ) THEN 1 ELSE 0 END) AS REAL) 
-                    / COUNT(r.room_id), 2
-                ) AS belegung_rate
+                    FROM Booking AS b2
+                    WHERE b2.room_id = r.room_id
+                      AND b2.is_cancelled = 0
+                ) THEN 1 ELSE 0 END) AS REAL)
+                / COUNT(r.room_id), 2
+            ) AS belegung_rate
             FROM
                 Room AS r
                 JOIN Room_Type AS rt ON r.type_id = rt.type_id
