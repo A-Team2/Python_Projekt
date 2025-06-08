@@ -72,7 +72,8 @@ Das ER-Diagramm beinhaltete zentrale Entitäten wie zum Beispiel `Hotel`, `Room`
 
 Das resultierende Klassendiagramm diente als Grundlage für die spätere Code-Implementierung und half dabei, eine saubere und nachvollziehbare Architektur für das System zu schaffen. Jede Klasse bildet dabei eine reale Komponente des Hotelbetriebs ab und ermöglicht durch entsprechende Methoden die zentrale Funktionalität wie z. B. Buchung, Verwaltung oder Auswertung.
 
-![image](https://github.com/user-attachments/assets/d273947d-7d7a-4e1a-8c09-a4acf01cf47a)
+![image](https://github.com/user-attachments/assets/1c4667f6-1931-4669-8a34-56cc19734e37)
+
 
 
 ## 4. Code-Architektur & Ordnerstruktur
