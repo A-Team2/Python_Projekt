@@ -115,7 +115,7 @@ Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystem
 
 ---
 
-## 4.2 Data Access Layer (DAL)
+### 4.2 Data Access Layer (DAL)
 
 Der Data Access Layer bündelt alle SQLite-Zugriffe und sorgt dafür, dass die Geschäftslogik (BLL) keine SQL-Syntax kennt. Unsere Überlegungen:
 
@@ -148,7 +148,7 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 
 ---
-## 4.3 Business Logic Layer
+### 4.3 Business Logic Layer
 
 | **Manager-Klasse**    | **Verantwortung**                                                                                                                                                                                                                                           |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -191,6 +191,8 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 ## 5. Herausforderungen & Lessons Learned
 
+### 5.1 Herausforderungen
+
 1. **Layer-Grenzen & Imports**  
    - Häufig vergaßen wir, Klassen aus einer anderen Schicht zu importieren (z. B. `BookingDataAccess` in `InvoiceDataAccess` oder `Room` in `Booking`).  
    - Um zirkuläre Importe zu vermeiden, haben wir in manchen Methoden lokale Imports genutzt und sorgfältig auf korrekte Paketpfade geachtet.
@@ -226,6 +228,48 @@ Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls
 
 ---
 
+### 5.2 Lessons Learned
+
+## Lessons Learned
+
+Im Rahmen des Projekts konnten wir nicht nur unsere Python-Kenntnisse vertiefen, sondern auch wichtige Erfahrungen im Bereich der Softwareentwicklung, Projektorganisation und Teamarbeit sammeln. Die Entwicklung des Hotelreservierungssystems hat uns gezeigt, wie theoretische Konzepte aus dem Studium in ein funktionierendes, praxisnahes System überführt werden können. Im Folgenden fassen wir unsere zentralen Learnings zusammen:
+
+### Vom Datenmodell zum Klassendiagramm
+
+- Wir haben gelernt, wie man ein gegebenes ER-Diagramm strukturiert in ein objektorientiertes Klassendiagramm überführt.
+- Dabei wurde deutlich, wie sich reale Entitäten wie `Hotel`, `Room`, `Guest` oder `Booking` in Python-Klassen abbilden lassen.
+- Beziehungen zwischen Entitäten – insbesondere 1:n und m:n – konnten wir mit Zwischentabellen und passender Objektstruktur erfolgreich modellieren.
+- Unser Verständnis für Datenmodellierung aus vorangegangenen Modulen (z. B. Datenbasierte Unternehmensanwendungen) konnten wir dadurch gezielt anwenden und vertiefen.
+
+### Objektorientierte Programmierung mit Python
+
+- Wir konnten die Prinzipien der OOP (Klassen, Attribute, Methoden, Konstruktoren) praxisnah umsetzen.
+- Durch Kapselung, Getter/Setter und klare Verantwortlichkeiten in den Klassen entwickelten wir wartbaren und strukturierten Code.
+- Die Anwendung von Aggregation und sinnvoller Trennung in Schichten (UI, Business Logic, Data Access) half uns dabei, ein sauberes Softwaredesign zu etablieren.
+- Besonders wertvoll war auch die Implementierung einer Testumgebung (`run.py`), mit der wir die einzelnen User Stories gezielt testen und voneinander trennen konnten.
+
+### Versionskontrolle mit GitHub
+
+- Wir sammelten praktische Erfahrung mit Git und GitHub – vom Erstellen und Klonen von Repositories über das Pushen und Mergen bis zur Konfliktbehandlung.
+- Dabei lernten wir, wie wichtig saubere Branch-Strukturen, Commit-Kommentare und Pull-Requests für die Zusammenarbeit im Team sind.
+- Wir haben unser Projekt strukturiert im Repository aufgebaut und das `README.md` als zentrale Dokumentation gepflegt.
+
+### Teamarbeit und Projektverlauf
+
+- Die ursprünglich vierköpfige Projektgruppe musste im Verlauf geteilt werden, da es zu ungleicher Arbeitsverteilung und fehlender Beteiligung kam.
+- Diese Erfahrung war lehrreich: Wir haben erkannt, wie wichtig frühzeitige Kommunikation und klare Absprachen im Team sind.
+- Ein wesentliches Learning ist, bei Anzeichen von Unausgeglichenheit nicht zu lange zu warten, sondern frühzeitig nach Lösungen oder Umstrukturierungen zu suchen.
+- Die spätere Gruppenaufteilung hat es uns ermöglicht, fokussierter und eigenverantwortlich zu arbeiten – was sich positiv auf Qualität und Teamdynamik ausgewirkt hat.
+
+### Projektstruktur und Testing
+
+- Die eigenständige Entscheidung, ein zentrales Ausführungs- und Testmenü (`run.py`) zu entwickeln, half uns, das System übersichtlich und modular zu halten.
+- Dadurch konnten wir nicht nur unsere User Stories gezielt testen, sondern auch zwischen Admin- und Nutzerrollen unterscheiden.
+- Diese Struktur ermöglichte uns eine systematische Qualitätssicherung und diente als wichtiger Bestandteil unserer Abschlusspräsentation.
+
+---
+
+Insgesamt hat uns dieses Projekt nicht nur fachlich, sondern auch methodisch und menschlich weitergebracht – sowohl im Hinblick auf die Softwareentwicklung als auch auf die Zusammenarbeit im Team.
 
 
 > **Vielen Dank fürs Lesen!**  
