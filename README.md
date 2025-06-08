@@ -19,6 +19,32 @@ Das System ermöglicht es Gästen, nach verfügbaren Hotels und Zimmern zu suche
   4. **UI Layer** – Konsolen-Menü (`run.py`), Eingabe- und Validierungshelfer (`input_helper.py`, `validation_helper.py`)  
   5. **User Stories** – Skripte je Anwendungsfall (`user_stories/…`)
 
+Das ursprüngliche Team bestand aus vier Mitgliedern. Im Verlauf des Projekts zeigte sich jedoch, dass die anderen zwei Gruppenmitglieder kaum bis keine aktive Mitarbeit leisteten – sowohl im Unterricht als auch bei der praktischen Umsetzung. Ihre unzureichenden Python-Kenntnisse erschwerten die Zusammenarbeit zusätzlich und machten eine faire Aufgabenverteilung nahezu unmöglich.
+
+Die vollständige Entwicklung und Organisation des Projekts wurde daher von uns beiden aktiven Mitgliedern übernommen. Wir setzten sämtliche *User Stories*, entwarfen die Code-Struktur und entwickelten die wesentlichen Systemkomponenten selbstständig. 
+
+Ein zusätzlicher Mehraufwand entstand durch folgende Probleme:
+
+* Die anderen beiden Gruppenmitglieder reichten ihre Codeanteile ohne funktionale Überprüfung ein – zum Teil automatisiert mit ChatGPT generiert.
+* Diese Änderungen wurden direkt über GitHub gepusht, ohne vorherige Rücksprache.
+* Fehler in den gemeinsam genutzten Layern (z. B. Business Logic) führten dazu, dass eigene, *User Stories* nicht mehr getestet werden konnten.
+* Die Korrektur dieser Beiträge erforderte viel Zeit und wiederholte Koordination.
+
+Aufgrund dieser Situation und in Rücksprache mit unserer betreuenden Lehrperson (Charuta) haben wir uns entschieden, das Team offiziell zu trennen. Da dies zusätzlich noch zu einem ziemlich späten Zeitpunkt passierte, wurde als reduzierte Abgabevorgabe folgendes vereinbart:
+
+* Umsetzung **aller Minimal-User-Stories**
+* Umsetzung von **einer** der beiden Erweiterungen:
+  * Datenbank-Schemaänderung **oder**
+  * Datenvisualisierung
+
+Wir entschieden uns bewusst für eine *Datenvisualisierungs-User-Story*, da uns deren technische Umsetzung besonders interessierte. Themen rund um Datenbankschemata und SQL hatten wir bereits im vorigen Semester vertieft behandelt.
+
+Unser Ziel war es, die umgesetzten *User Stories* so perfekt, wie für uns möglich zu gestalten. Dies beanspruchte natürlich viel Zeit, da viele Anpassungen nötig waren, bis wir mit dem Code 100% zufrieden waren. Zusätzlich haben wir ein zentrales Test- und Startskript namens `run.py` entwickelt, das als Menüoberfläche dient. Es ermöglicht die gezielte Ausführung der implementierten User Stories, wobei zwischen der Benutzer- und der Administratorrolle unterschieden wird. 
+
+Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als *Admin* fortfahren möchte. Anschließend erhält man eine strukturierte Auswahl der verfügbaren Funktionen (z. B. Buchung, Stornierung, Visualisierung etc.), die per Eingabe direkt ausgeführt werden können.
+
+Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auch sicher, dass alle User Stories sauber und unabhängig voneinander aufrufbar sind – ein zentraler Aspekt für die Präsentation und Qualitätssicherung unseres Systems.
+
 ---
 
 ## 2. Aufgabenteilung
@@ -98,7 +124,9 @@ Der Data Access Layer bündelt alle SQLite-Zugriffe und sorgt dafür, dass die G
   - **`BookingDataAccess`:**  
     ­ ­ Unterstützt `insert_booking()`, `read_booking_by_id()`, `read_bookings_by_guest_id()`, `read_bookings_by_room()`, `cancel_booking()`.  
   - **`InvoiceDataAccess`:**  
-    ­ ­ Kümmert sich um `insert_invoice()`, `read_invoice_by_id()`, `read_invoice_by_booking_id()`.  
+    ­ ­ Kümmert sich um `insert_invoice()`, `read_invoice_by_id()`, `read_invoice_by_booking_id()`.
+  - **`AnalyticsDataAccess`:**  
+    ­ ­ Liefert Analytics-Methoden wie `read_occupancy_by_hotel(hotel_id)` für Belegungsraten pro Zimmertyp. 
 
 - **Wesentliche Designentscheidungen:**  
   1. **Einzelverantwortung pro DAO:** Jeder DAO ist nur für eine Tabelle zuständig. So bleibt die SQL-Logik wirklich vollständig im DAL, und Änderungen am Schema betreffen nur eine Klasse.  
@@ -111,19 +139,17 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 ---
 
-### 3.3 Business Logic Layer (BLL)
-
-| **Manager-Klasse**   | **Verantwortung**                                                                                                                                                                                             |
-|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **HotelManager**     | Filtern von Hotels nach Stadt, Sternen, Verfügbarkeit; Koordinierung von `RoomDataAccess` – liefert `Room`-Objekte als Antwort.                                                                                |
-| **GuestManager**     | Validiert Eingaben (Vor-/Nachname, E-Mail), Erstellung & Abfrage von Gästen über `GuestDataAccess`.                                                                                                             |
-| **BookingManager**   | Erstellt neue Buchungen (`insert_booking`), listet Buchungen pro Gast (`read_bookings_by_guest_id`), storniert Buchungen und markiert deren Invoice.                                                            |
-| **InvoiceManager**   | Generiert Rechnungen für abgeschlossene oder stornierte Buchungen: Berechnung des Betrags, Anlegen in DB, Laden über `InvoiceDataAccess`.                                                                       |
-| **PricingManager**   | Berechnet dynamische Preise: Basispreis = `base_price_per_night * nights`, ergänzt um saisonale Auf- oder Abschläge (z. B. Sommeraufschlag, Winterrabatt).                                                       |
-
+| **Manager-Klasse**    | **Verantwortung**                                                                                                                                                                                                                                           |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **HotelManager**      | Filtern von Hotels nach Stadt, Sternen, Verfügbarkeit; Koordinierung von `RoomDataAccess` – liefert `Room`-Objekte als Antwort.                                                                                                                            |
+| **GuestManager**      | Validiert Eingaben (Vor-/Nachname, E-Mail), Erstellung & Abfrage von Gästen über `GuestDataAccess`.                                                                                                                                                          |
+| **BookingManager**    | Erstellt neue Buchungen (`insert_booking()`), listet Buchungen pro Gast (`read_bookings_by_guest_id()`), storniert Buchungen und markiert deren Invoice.                                                                                                      |
+| **InvoiceManager**    | Generiert Rechnungen für abgeschlossene oder stornierte Buchungen: Berechnung des Betrags, Anlegen in DB, Laden über `InvoiceDataAccess`.                                                                                                                   |
+| **PricingManager**    | Berechnet dynamische Preise: Basispreis = `base_price_per_night * nights`, ergänzt um saisonale Auf- oder Abschläge (z. B. Sommeraufschlag, Winterrabatt).                                                                                                    |
+| **AnalyticsManager**  | Ruft `AnalyticsDataAccess.read_occupancy_by_hotel(hotel_id)` ab und wandelt die Ergebnisse in ein `pandas.DataFrame` mit den Spalten <br>`type_id`, `description`, `total_rooms`, `booked_rooms`, `belegung_rate`. |
 ---
 
-### 3.4 UI Layer
+### 3.4 Unser Run.py Test
 
 - **`run.py`** – Hauptskript mit Konsolen-Menü:  
   1. Kopiert beim Start `hotel_reservation_sample.db` → `working_hotel.db` (via `shutil.copyfile`).  
@@ -151,112 +177,6 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 ---
 
-## 4. User Stories – Überblick
-
-### 4.1 Einfache User Stories (1.x – 4.x)
-
-Einfacher Ablauf im System:
-
-1. **US 1.1** – Hotels in Stadt anzeigen  
-2. **US 1.2** – Hotels in Stadt mit Mindeststernen anzeigen  
-3. **US 1.3** – Hotels in Stadt mit Zimmern für X Gäste anzeigen  
-4. **US 1.4** – Hotels in Stadt nach Verfügbarkeit (Check-in/Check-out) durchsuchen  
-5. **US 1.5** – Kombination: Stadt + Sterne + Gäste + Datum (Filterkombi)  
-6. **US 1.6** – Detaillierte Hotelinformationen (Ausstattung, Adresse, Sterne)  
-7. **US 2.x/3.x** – Zimmertypen und Ausstattung anzeigen und Hotels bearbeiten (entfernen, hinzufügen)
-8. **US 4** – Zimmer buchen  
-
-> Diese Stories liefen über einfache SQL-Abfragen im DAL und direktes Mapping in Model-Objekte; die Geschäftslogik war geradlinig und ohne größere Schichtgrenzen-Probleme umsetzbar.
-
----
-
-### 4.2 Komplexe User Stories: US 5, US 6 & US 7
-
-Wir beschreiben hier nur die Abläufe der drei komplexesten User Stories. Die tiefergehende technische Umsetzung (SQL-Statements, genaue Klassenmethoden etc.) findet sich in unserem Deepnote-Notebook.
-
----
-
-#### US 5 – Rechnung nach Aufenthalt erstellen
-
-- **Ziel:**  
-  Nach Abschluss eines Aufenthalts möchte der Gast eine Rechnung (Zahlungsnachweis) erhalten.
-
-- **Konzepte & Ablauf:**  
-  1. **E-Mail validieren:** Die UI fragt via `input_helper` nach einer gültigen E-Mail.  
-  2. **Gast laden:** `GuestManager.read_guest_by_email(email)` holt das `Guest`-Objekt. Ist keine Buchung vorhanden, wird eine Fehlermeldung angezeigt.  
-  3. **Abgeschlossene Buchungen filtern:**  
-     - Mit `BookingManager.get_bookings_for_guest(guest)` werden alle Buchungen des Gastes geholt.  
-     - Anschließend filtert die UI nur die Buchungen heraus, deren `check_out_date` in der Vergangenheit liegt und die nicht storniert wurden.  
-  4. **Rechnung erzeugen:**  
-     - Der Gast wählt eine abgeschlossene Buchung aus der Liste.  
-     - `InvoiceManager.generate_invoice(booking)` legt einen neuen Datensatz in der Tabelle `invoice` an (mit Feldern `booking_id`, `issue_date`, `total_amount`).  
-     - Intern wird der Rechnungsbetrag berechnet (entweder über `booking.calculate_total_price()` oder direkt `booking.total_amount`) und das Ausstellungsdatum (`date.today()`) gesetzt.  
-  5. **Anzeige:** Die UI zeigt dem Gast anschließend die generierte Rechnung, z. B.:  
-     ```
-     Rechnung für Buchung 7: Datum 2025-05-10, Betrag 760.00 CHF
-     ```
-
-> **Hinweis zur Umsetzung:**  
-> - Wichtig war, dass die `invoice`-Tabelle nur genau die Spalten `invoice_id`, `booking_id`, `issue_date` (TEXT), `total_amount` (REAL) enthält, weil unser `Invoice`-Konstruktor keine zusätzliche `invoice_id` als Argument erwartet.  
-> - Ein früheres Mapping-Problem führte zu einem `TypeError`, weil wir zu viele Parameter an `Invoice.__init__()` übergeben hatten. Dieses Mapping wurde im DAL korrigiert.
-
----
-
-#### US 6 – Buchung stornieren
-
-- **Ziel:**  
-  Ein Gast möchte eine eigene Buchung stornieren, wenn er das Zimmer nicht mehr benötigt. Gleichzeitig soll eine (Storno-)Rechnung angelegt werden.
-
-- **Konzepte & Ablauf:**  
-  1. **Identifikation via E-Mail:** Die UI fragt den Gast nach seiner E-Mail und zeigt anschließend alle aktiven (nicht stornierten, zukünftigen) Buchungen an.  
-  2. **Buchungsauswahl & Storno:**  
-     - Der Gast wählt eine Buchung aus, die storniert werden soll.  
-     - `BookingManager.cancel_booking(booking_id)` setzt intern das Flag `is_cancelled = True`.  
-     - Die zugehörige `Invoice`-Referenz im `Booking`-Objekt wird auf `None` gesetzt.  
-  3. **Storno-Rechnung erzeugen:**  
-     - Nach der Stornierung ruft die UI `InvoiceManager.generate_invoice(booking)` auf, um eine neue Rechnung (z. B. Gutschrift oder Storno-Quittung) in der Tabelle `invoice` anzulegen.  
-     - Die Rechnung verweist auf die stornierten Buchung und enthält das Ausstellungsdatum sowie den berechneten Betrag (meist 0 CHF oder ein Storno-Betrag).  
-  4. **Anzeige:** Die UI bestätigt dem Gast, dass die Buchung storniert und eine Storno-Rechnung angelegt wurde.
-
-> **Hinweis zur Umsetzung:**  
-> - Wir haben darauf geachtet, dass im `Booking`-Konstruktor standardmäßig eine `Invoice` erstellt wird (Komposition). Beim Storno (`Booking.cancel()`) wird dieses Invoice-Attribut auf `None` gesetzt.  
-> - Ein früherer Fehler war, dass wir versucht haben, eine `BookingDataAccess`-Instanz ohne Import zu verwenden. Dies wurde korrigiert, indem `BookingDataAccess` im DAL- und BLL-Code korrekt importiert wurde.  
-> - Außerdem trat ein `TypeError` auf, weil unser `Invoice`-Model nur drei Konstruktor-Parameter (ohne `invoice_id`) erwartet. Mit angepasstem DAL-Mapping war der Fehler behoben.
-
----
-
-#### US 7 – Dynamische Preisgestaltung anzeigen
-
-- **Ziel:**  
-  Gäste sollen basierend auf Saisonzeiten unterschiedliche Preise sehen, um immer den besten Tarif zu wählen.
-
-- **Konzepte & Ablauf:**  
-  1. **Zeitraum und Gästezahl erfragen:** Die UI fragt nach Check-in, Check-out und Anzahl Personen.  
-  2. **Verfügbare Zimmer laden:** `HotelManager.get_available_rooms(hotel_id, check_in, check_out)` liefert alle freien `Room`-Objekte.  
-  3. **Preisberechnung:** Im `PricingManager.calculate_price(room_id, check_in, check_out, guests)` wird:  
-     - Die Aufenthaltsdauer berechnet: `(check_out - check_in).days`.  
-     - Der Grundpreis: `room.price_per_night * nights`.  
-     - **Saisonalität:**  
-       - **Hochsaison (Juni–August):** + 20 % zum Basispreis.  
-       - **Nebensaison (November–Februar):** – 10 % zum Basispreis.  
-       - Standard: Basispreis beibehalten.  
-  4. **Anzeige:** Die UI zeigt pro Zimmernummer den dynamisch berechneten Gesamtpreis an, z. B.:  
-     ```
-     Zimmer 102: Basis 400 CHF/Nacht → 4 Nächte = 1600 CHF (Hochsaison-Aufschlag) → Endpreis 1920 CHF
-     ```
-
-> **Hinweis zur Umsetzung:**  
-> - In unserem Deepnote-Notebook sind die genauen Monatsbereiche (z. B. `if check_in.month in [6,7,8]:`) und die Prozentrechnungen dokumentiert.  
-> - Wir haben bewusst darauf verzichtet, jeden möglichen Sonderfall (Wechsel von Saison-Mitgliedsjahren, Feiertage) abzubilden, da der Prototyp vor allem die dynamische Grundidee demonstrieren soll.  
-
----
-
-#### Reflexion zu US 5, US 6 & US 7
-
-- Bei allen drei Stories war die enge Zusammenarbeit zwischen DAL, BLL und UI besonders wichtig.  
-- Immer wieder sind wir an „Layer-Grenzen“ gescheitert, z. B. wenn in einer BLL-Methode ein falscher DAL-Import fehlte oder wenn Model-Konstruktoren nicht exakt zu den SQL-Resultaten passten.  
-- **Beispiel US 6:** Ein `TypeError` („`Invoice.__init__() takes 4 positional arguments but 5 were given`“) zeigte, dass unser DAL zunächst zu viele Felder an den `Invoice`-Konstruktor weiterreichte.  
-- Solche Probleme traten auch in US 5 (falsches Mapping von Datumstypen) und US 7 (falsche Monatsbereiche) auf.
 
 ## 5. Herausforderungen & Lessons Learned
 
