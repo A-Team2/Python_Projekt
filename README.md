@@ -10,7 +10,8 @@ Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python�
 Das System ermöglicht es Gästen, nach verfügbaren Hotels und Zimmern zu suchen, Buchungen anzulegen, zu stornieren und nach einem Aufenthalt Rechnungen zu erhalten. Gleichzeitig bietet es Administratoren Einsicht in sämtliche Buchungen.
 
 - **Ziel:** Ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte der Python-Programmierung abbildet.  
-- **IDE:** Visual Studio Code  
+- **IDE:** Visual Studio Code
+- **Modellierung:** Visual Paradigm
 - **Versionskontrolle & Kollaboration:** GitHub  
 - **Architektur (Schichtenmodell):**  
   1. **Model Layer** – Domänenklassen (Hotel, Room, Guest, Booking, Invoice, …)  
@@ -62,7 +63,16 @@ Wir waren zu zweit im aktiven Kernteam und haben die Implementierung folgenderma
 
 ---
 
-## 3. Code-Architektur & Ordnerstruktur
+## 3. Klassendiagramm und objektorientierte Modellierung
+
+Im Rahmen der zweiten Unterrichtseinheit haben wir uns intensiv mit den Grundlagen der objektorientierten Programmierung (OOP) beschäftigt. Aufbauend auf einem vorgegebenen ER-Diagramm, das die Datenstruktur eines Hotelreservierungssystems beschreibt, erarbeiteten wir ein entsprechendes Klassendiagramm.
+
+Das ER-Diagramm beinhaltete zentrale Entitäten wie zum Beispiel `Hotel`, `Room`, `Guest`, `Booking` und deren Beziehungen zueinander. Unsere Aufgabe bestand darin, diese Entitäten in Klassen zu überführen und dabei die Prinzipien der objektorientierten Modellierung korrekt anzuwenden. Dies umfasste insbesondere die Strukturierung in Attribute und Methoden sowie die Berücksichtigung von Kapselung, Verantwortlichkeiten und logischen Beziehungen zwischen den Objekten.
+
+Das resultierende Klassendiagramm diente als Grundlage für die spätere Code-Implementierung und half dabei, eine saubere und nachvollziehbare Architektur für das System zu schaffen. Jede Klasse bildet dabei eine reale Komponente des Hotelbetriebs ab und ermöglicht durch entsprechende Methoden die zentrale Funktionalität wie z. B. Buchung, Verwaltung oder Auswertung.
+
+
+## 4. Code-Architektur & Ordnerstruktur
 
 Die Architektur ist in klassische Schichten (Layers) gegliedert. Jeder Layer hat klar abgegrenzte Verantwortlichkeiten:
 
@@ -70,7 +80,7 @@ Die Architektur ist in klassische Schichten (Layers) gegliedert. Jeder Layer hat
 
 
 
-### 3.1 Model Layer (Domänenklassen)
+### 4.1 Model Layer (Domänenklassen)
 
 Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystems abgebildet. Jede Klasse entspricht einer Entität aus dem ER‐Schema und enthält nur jene Attribute und Methoden, die für das Geschäftsverständnis nötig sind.
 
@@ -105,7 +115,7 @@ Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystem
 
 ---
 
-## 3.2 Data Access Layer (DAL)
+## 4.2 Data Access Layer (DAL)
 
 Der Data Access Layer bündelt alle SQLite-Zugriffe und sorgt dafür, dass die Geschäftslogik (BLL) keine SQL-Syntax kennt. Unsere Überlegungen:
 
@@ -138,6 +148,7 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 
 ---
+## 4.3 Business Logic Layer
 
 | **Manager-Klasse**    | **Verantwortung**                                                                                                                                                                                                                                           |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -149,7 +160,7 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 | **AnalyticsManager**  | Ruft `AnalyticsDataAccess.read_occupancy_by_hotel(hotel_id)` ab und wandelt die Ergebnisse in ein `pandas.DataFrame` mit den Spalten <br>`type_id`, `description`, `total_rooms`, `booked_rooms`, `belegung_rate`. |
 ---
 
-### 3.4 Unser Run.py Test
+### 4.4 Unser Run.py Test
 
 - **`run.py`** – Hauptskript mit Konsolen-Menü:  
   1. Kopiert beim Start `hotel_reservation_sample.db` → `working_hotel.db` (via `shutil.copyfile`).  
