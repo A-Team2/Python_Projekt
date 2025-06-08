@@ -197,7 +197,16 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
    - Häufig vergaßen wir, Klassen aus einer anderen Schicht zu importieren (z. B. `BookingDataAccess` in `InvoiceDataAccess` oder `Room` in `Booking`).  
    - Um zirkuläre Importe zu vermeiden, haben wir in manchen Methoden lokale Imports genutzt und sorgfältig auf korrekte Paketpfade geachtet.
 
-2. **Model `Invoice` vs. Datenbank-Schema**  
+2. **OOP-Beziehungen korrekt anwenden**  
+   - Die konkrete Umsetzung von Aggregation, Komposition und Assoziation im Code war zunächst schwierig. Es erforderte Übung, um zu erkennen, wann welche Beziehung am            sinnvollsten ist – insbesondere bei verschachtelten Objekten wie Buchungen mit Gästen und Zimmern.
+
+3. **Schichtübergreifende Logik**  
+   - Das Zusammenspiel zwischen UI, Business Logic und Data Access bereitete uns anfangs Schwierigkeiten. Oft war unklar, welche Funktion in welcher Schicht verortet werden      sollte, was zu Redundanz oder unklarer Verantwortlichkeit führte.
+
+4. **Zeitmanagement durch Gruppenprobleme**  
+   - Wie am Anfang ausführlich erwähnt wurde unser Zeitplan durch zwei inaktive Gruppenmitglieder stark beeinträchtigt.
+
+5. **Model `Invoice` vs. Datenbank-Schema**  
    - Der `Invoice`-Konstruktor (`__init__(self, booking, issue_date, total_amount)`) war auf genau drei Argumente ausgelegt – ohne `invoice_id`.  
    - Anfangs wurde versehentlich `invoice_id` mitkonstruiert, was zu:  
      ```
@@ -207,11 +216,11 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
    - Lösung: In `InvoiceDataAccess.read_invoice_by_id()` nur `(inv_id, booking, issue_date, total_amount)` an `Invoice()` übergeben und `invoice_id` nicht im Konstruktor erwarten.
 
 
-3. **Storno-Logik (US 6)**  
+6. **Storno-Logik (US 6)**  
    - Auf Objektebene (`Booking.cancel()`) und in der Datenbank (`UPDATE booking SET is_cancelled = 1`) synchronisieren.  
    - Alte Rechnung musste auf Objektebene auf `None` gesetzt werden, damit keine veraltete Rechnung weiterverwendet wird.
 
-4. **Probleme bei mehreren US**  
+7. **Probleme bei mehreren US**  
    - Ähnliche Schichtgrenzen-/Import-Probleme traten auch bei US 5 und US 7 auf – z. B. falsche Parameteranzahl, fehlende `datetime`-Imports, Namensinkonsistenzen.  
    - Beispiel US 6: In `InvoiceDataAccess.read_invoice_by_id()` vergessen, `from data_access.booking_data_access import BookingDataAccess` zu importieren, was zu  
      ```
@@ -221,10 +230,10 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 
 Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Problemen hatten, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch einige andere Errors die es zu lösen gab, jedoch wäre es zu viel und nicht zielführend alle aufzulisten.
 
-5. **Team-Kollaboration & GitHub-Workflow**  
-   - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was Konflikte verursachte.  
-   - Wir haben rasch gelernt, Feature-Branches zu nutzen und regelmäßig `git pull --rebase` durchzuführen.  
-   - Code-Reviews und Pull-Request-Merges stellten sicher, dass nur fehlerfreier Code in `main` gelangt.
+8. **Team-Kollaboration & GitHub-Workflow**  
+   - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was zu Fehlern, Konflikten und instabilem Code führte.  
+   - Mehrfach mussten falsch gepushte Versionen manuell zurückgesetzt oder repariert werden, was zusätzlichen Aufwand und Zeitverlust bedeutete.  
+   - Wir haben erkannt, wie wichtig es ist, sich an Absprachen zu halten, Änderungen lokal zu testen und nur funktionierenden Code gemeinsam zu teilen – insbesondere bei         paralleler Arbeit an denselben Dateien.
 
 ---
 
@@ -245,7 +254,7 @@ Im Rahmen des Projekts konnten wir nicht nur unsere Python-Kenntnisse vertiefen,
 
 - Wir konnten die Prinzipien der OOP (Klassen, Attribute, Methoden, Konstruktoren) praxisnah umsetzen.
 - Durch Kapselung, Getter/Setter und klare Verantwortlichkeiten in den Klassen entwickelten wir wartbaren und strukturierten Code.
-- Die Anwendung von Aggregation und sinnvoller Trennung in Schichten (UI, Business Logic, Data Access) half uns dabei, ein sauberes Softwaredesign zu etablieren.
+- Wir haben gelernt, verschiedene Arten von objektorientierten Beziehungen anzuwenden – darunter Aggregation, Komposition, Assoziation – und konnten so ein besseres           Verständnis für die Strukturierung komplexer Objekte im Code entwickeln.
 - Besonders wertvoll war auch die Implementierung einer Testumgebung (`run.py`), mit der wir die einzelnen User Stories gezielt testen und voneinander trennen konnten.
 
 ### Versionskontrolle mit GitHub
