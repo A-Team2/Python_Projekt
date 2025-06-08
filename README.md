@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/d273947d-7d7a-4e1a-8c09-a4acf01cf47a)
 # Hotel Reservation System
 
 Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python“ (FS25)** an der FHNW umgesetzt. Ziel war es, ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte wie objektorientierte Programmierung, eine mehrschichtige Architektur und Datenbankzugriffe mit SQLite abbildet und die vorgegebenen User Stories erfüllt.
@@ -42,7 +41,7 @@ Wir entschieden uns bewusst für eine *Datenvisualisierungs-User-Story*, da uns 
 
 Unser Ziel war es, die umgesetzten *User Stories* so perfekt, wie für uns möglich zu gestalten. Dies beanspruchte natürlich viel Zeit, da viele Anpassungen nötig waren, bis wir mit dem Code 100% zufrieden waren. Zusätzlich haben wir ein zentrales Test- und Startskript namens `run.py` entwickelt, das als Menüoberfläche dient. Es ermöglicht die gezielte Ausführung der implementierten User Stories, wobei zwischen der Benutzer- und der Administratorrolle unterschieden wird. 
 
-Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als *Admin* fortfahren möchte. Anschließend erhält man eine strukturierte Auswahl der verfügbaren Funktionen (z. B. Buchung, Stornierung, Visualisierung etc.), die per Eingabe direkt ausgeführt werden können.
+Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als *Admin* fortfahren möchte. Anschliessend erhält man eine strukturierte Auswahl der verfügbaren Funktionen (z. B. Buchung, Stornierung, Visualisierung etc.), die per Eingabe direkt ausgeführt werden können.
 
 Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auch sicher, dass alle User Stories sauber und unabhängig voneinander aufrufbar sind – ein zentraler Aspekt für die Präsentation und Qualitätssicherung unseres Systems.
 
@@ -50,7 +49,7 @@ Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auc
 
 ## 2. Aufgabenteilung
 
-Wir waren zu zweit im aktiven Kernteam und haben die Implementierung folgendermaßen aufgeteilt:
+Wir waren zu zweit im aktiven Kernteam und haben die Implementierung folgendermassen aufgeteilt:
 
 | Teammitglied        | Zuständigkeiten                                                                                                                                         |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -71,6 +70,8 @@ Das ER-Diagramm beinhaltete zentrale Entitäten wie zum Beispiel `Hotel`, `Room`
 
 Das resultierende Klassendiagramm diente als Grundlage für die spätere Code-Implementierung und half dabei, eine saubere und nachvollziehbare Architektur für das System zu schaffen. Jede Klasse bildet dabei eine reale Komponente des Hotelbetriebs ab und ermöglicht durch entsprechende Methoden die zentrale Funktionalität wie z. B. Buchung, Verwaltung oder Auswertung.
 
+![image](https://github.com/user-attachments/assets/d273947d-7d7a-4e1a-8c09-a4acf01cf47a)
+
 
 ## 4. Code-Architektur & Ordnerstruktur
 
@@ -88,7 +89,7 @@ Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystem
   Ein `Hotel` hat einen Namen, eine Sternebewertung und eine Adresse. Aus programmtechnischer Sicht kapselt die Klasse die internen Eigenschaften („private Attributes“), und über Methoden wie `add_room()` und `remove_room()` verwalten wir die Zimmerliste. So ist garantiert, dass ein `Room` immer nur einem Hotel zugeordnet sein kann und umgekehrt.
 
 - **Room**  
-  Jeder `Room` gehört zu genau einem `Hotel` und hat eine Zimmernummer sowie einen Basispreis pro Nacht. Außerdem besitzt ein Zimmer genau einen `RoomType` (z. B. „Standard“, „Suite“). Ganz wichtig: Die Methode `is_available(check_in, check_out)` prüft anhand aller bestehenden Buchungen, ob der Zeitraum frei ist. Neu hinzukommende Buchungen werden in der Buchungsliste des Raumes abgelegt.
+  Jeder `Room` gehört zu genau einem `Hotel` und hat eine Zimmernummer sowie einen Basispreis pro Nacht. Ausserdem besitzt ein Zimmer genau einen `RoomType` (z. B. „Standard“, „Suite“). Ganz wichtig: Die Methode `is_available(check_in, check_out)` prüft anhand aller bestehenden Buchungen, ob der Zeitraum frei ist. Neu hinzukommende Buchungen werden in der Buchungsliste des Raumes abgelegt.
 
 - **RoomType**  
   Diese Klasse dient dazu, Zimmertypen (z. B. „Doppelzimmer Deluxe“ oder „Einzelzimmer Economy“) zentral zu beschreiben. Ein `RoomType` enthält eine Kurzbeschreibung (Text) und eine maximale Personenzahl. So können wir später leicht überprüfen, ob zu viele Gäste für einen bestimmten Zimmertyp angefragt wurden.
@@ -97,7 +98,7 @@ Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystem
   Einige Hotels bieten Zusatzleistungen oder Ausstattungsmerkmale (z. B. „WLAN“, „Fitnessraum“ oder „Frühstück inklusive“) an. Um diese m:n‐Beziehung abzubilden, verwalten wir in der Klasse `Facilities` die einzelnen Ausstattungs‐Einträge und nutzen in der Datenbank eine Zwischentabelle `room_facilities`. In den Objekten halten wir einfach eine Liste aller `Facilities`, die einem Zimmer zugeordnet sind.
 
 - **Guest**  
-  Ein `Guest` steht für einen Hotelgast mit Vorname, Nachname, E-Mail und Adresse. Außerdem verwaltet er eine Liste aller eigenen Buchungen (`bookings`). Immer, wenn eine neue `Booking` für diesen Gast erzeugt wird, ruft der Konstruktor intern `guest.add_booking(thisBooking)` auf, damit die Assoziation bidirektional bleibt.
+  Ein `Guest` steht für einen Hotelgast mit Vorname, Nachname, E-Mail und Adresse. Ausserdem verwaltet er eine Liste aller eigenen Buchungen (`bookings`). Immer, wenn eine neue `Booking` für diesen Gast erzeugt wird, ruft der Konstruktor intern `guest.add_booking(thisBooking)` auf, damit die Assoziation bidirektional bleibt.
 
 - **Booking**  
   Eine `Booking` verbindet genau einen `Guest` mit einem oder mehreren `Room`‐Objekten. In der Buchung speichern wir Anreisedatum, Abreisedatum, den Gesamtpreis (`total_amount`) und ein Flag `is_cancelled`, falls die Buchung storniert wurde. Direkt beim Erzeugen einer Buchung wird automatisch ein `Invoice`‐Objekt angelegt (Komposition). So ist garantiert, dass jede abgeschlossene Buchung‐Instanz genau eine Rechnung besitzt.
@@ -106,7 +107,7 @@ Im Model Layer haben wir alle zentralen Objekte unseres Hotelreservierungssystem
   Eine `Invoice` enthält das Ausstellungsdatum und den Gesamtbetrag zu einer Buchung. Technisch ist sie fest an eine `Booking` gebunden („Komposition“), sodass bei Löschung einer Buchung auch die zugehörige Rechnung verschwindet. Wir haben uns bewusst entschieden, den Konstruktor so einfach wie möglich zu halten: Er nimmt nur die schon existierende `Booking`, das Datum und den Betrag entgegen, prüft die Gültigkeit und speichert die Werte.
 
 - **Address**  
-  Um Redundanzen zu vermeiden, haben wir eine eigene `Address`‐Klasse modelliert (Straße, Stadt, Postleitzahl). Sowohl ein `Hotel` als auch ein `Guest` referenzieren auf exakt ein `Address`‐Objekt. So können wir später Adressen wiederverwenden oder zentral ändern, ohne in jeder Klasse mehrfach Textdaten pflegen zu müssen.
+  Um Redundanzen zu vermeiden, haben wir eine eigene `Address`‐Klasse modelliert (Strasse, Stadt, Postleitzahl). Sowohl ein `Hotel` als auch ein `Guest` referenzieren auf exakt ein `Address`‐Objekt. So können wir später Adressen wiederverwenden oder zentral ändern, ohne in jeder Klasse mehrfach Textdaten pflegen zu müssen.
 
 
 
@@ -140,7 +141,7 @@ Der Data Access Layer bündelt alle SQLite-Zugriffe und sorgt dafür, dass die G
 
 - **Wesentliche Designentscheidungen:**  
   1. **Einzelverantwortung pro DAO:** Jeder DAO ist nur für eine Tabelle zuständig. So bleibt die SQL-Logik wirklich vollständig im DAL, und Änderungen am Schema betreffen nur eine Klasse.  
-  2. **Konvertierung zu Model-Objekten:** Bei `fetchone()` und `fetchall()` übersetzen wir die reinen Datenbank-Zeilen in Instanzen der Domänenklassen (z. B. `Hotel`, `Room`, `Booking`). Damit ist sichergestellt, dass der BLL-Layer ausschließlich mit Objekten arbeitet und nicht mit rohen Tupeln.  
+  2. **Konvertierung zu Model-Objekten:** Bei `fetchone()` und `fetchall()` übersetzen wir die reinen Datenbank-Zeilen in Instanzen der Domänenklassen (z. B. `Hotel`, `Room`, `Booking`). Damit ist sichergestellt, dass der BLL-Layer ausschliesslich mit Objekten arbeitet und nicht mit rohen Tupeln.  
   3. **Keine Geschäftsregeln im DAL:** Validierungen wie „Ist der Gast wirklich ein `Guest`?“ oder „Sind Check-in und Check-out gültige Daten?“ werden komplett im BLL-Layer erledigt. Das DAL führt nur SQL aus und erstellt Model-Instanzen.  
 
 Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehalten wird und Änderungen im Datenbankschema (z. B. Hinzufügen einer neuen Spalte) nur minimale Anpassungen im DAL erfordern.  
@@ -194,7 +195,7 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 ### 5.1 Herausforderungen
 
 1. **Layer-Grenzen & Imports**  
-   - Häufig vergaßen wir, Klassen aus einer anderen Schicht zu importieren (z. B. `BookingDataAccess` in `InvoiceDataAccess` oder `Room` in `Booking`).  
+   - Häufig vergassen wir, Klassen aus einer anderen Schicht zu importieren (z. B. `BookingDataAccess` in `InvoiceDataAccess` oder `Room` in `Booking`).  
    - Um zirkuläre Importe zu vermeiden, haben wir in manchen Methoden lokale Imports genutzt und sorgfältig auf korrekte Paketpfade geachtet.
 
 2. **OOP-Beziehungen korrekt anwenden**  
