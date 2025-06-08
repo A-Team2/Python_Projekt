@@ -45,6 +45,8 @@ Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als
 
 Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auch sicher, dass alle User Stories sauber und unabhängig voneinander aufrufbar sind – ein zentraler Aspekt für die Präsentation und Qualitätssicherung unseres Systems.
 
+Was noch kurz zu erwähnen ist: Zu Beginn des Projekts wollten wir als Vierergruppe mit einer To-Do/Doing/Done-Tabelle arbeiten und regelmäßige Sprint Plannings durchführen, um die Aufgaben strukturiert zu verteilen und den Fortschritt zu kontrollieren – insbesondere, da solche Methoden in größeren Teams essenziell sind. Nach der Gruppenaufteilung war dies für uns nicht mehr notwendig, da wir uns zu zweit sowohl in der Schule als auch privat regelmäßig trafen und die Planung direkt vor Ort abstimmten. Zusätzlich standen wir täglich über Textnachrichten im Austausch, was eine enge und effiziente Zusammenarbeit ermöglichte.
+
 ---
 
 ## 2. Aufgabenteilung
@@ -207,7 +209,9 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
 4. **Zeitmanagement durch Gruppenprobleme**  
    - Wie am Anfang ausführlich erwähnt wurde unser Zeitplan durch zwei inaktive Gruppenmitglieder stark beeinträchtigt.
 
-5. **Model `Invoice` vs. Datenbank-Schema**  
+5. **Einige genauere Beispiel Probleme**
+   
+5.1 **Model `Invoice` vs. Datenbank-Schema**  
    - Der `Invoice`-Konstruktor (`__init__(self, booking, issue_date, total_amount)`) war auf genau drei Argumente ausgelegt – ohne `invoice_id`.  
    - Anfangs wurde versehentlich `invoice_id` mitkonstruiert, was zu:  
      ```
@@ -217,11 +221,11 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
    - Lösung: In `InvoiceDataAccess.read_invoice_by_id()` nur `(inv_id, booking, issue_date, total_amount)` an `Invoice()` übergeben und `invoice_id` nicht im Konstruktor erwarten.
 
 
-6. **Storno-Logik (US 6)**  
+5.2 **Storno-Logik (US 6)**  
    - Auf Objektebene (`Booking.cancel()`) und in der Datenbank (`UPDATE booking SET is_cancelled = 1`) synchronisieren.  
    - Alte Rechnung musste auf Objektebene auf `None` gesetzt werden, damit keine veraltete Rechnung weiterverwendet wird.
 
-7. **Probleme bei mehreren US**  
+5.3 **Probleme bei mehreren US**  
    - Ähnliche Schichtgrenzen-/Import-Probleme traten auch bei US 5 und US 7 auf – z. B. falsche Parameteranzahl, fehlende `datetime`-Imports, Namensinkonsistenzen.  
    - Beispiel US 6: In `InvoiceDataAccess.read_invoice_by_id()` vergessen, `from data_access.booking_data_access import BookingDataAccess` zu importieren, was zu  
      ```
@@ -229,9 +233,9 @@ Mit diesem Ansatz stellen wir sicher, dass die Schichtentrennung strikt eingehal
      ```  
      führte.
 
-Dies waren Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Problemen hatten, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch einige andere Errors die es zu lösen gab, jedoch wäre es zu viel und nicht zielführend alle aufzulisten.
+Dies waren wie erwähnt nur einige Beispiele von Problemen die wir gerade kürzlich hatten und ebenfalls die Art von Problemen, die am häufigsten vorkammen. Natürlich hatten wir im Verlauf vom Projekt noch einige andere Errors die es zu lösen gab, jedoch wäre es zu viel und nicht zielführend alle aufzulisten.
 
-8. **Team-Kollaboration & GitHub-Workflow**  
+6. **Team-Kollaboration & GitHub-Workflow**  
    - Anfangs wurden ungeprüfte Änderungen direkt auf `main` gepusht, was zu Fehlern, Konflikten und instabilem Code führte.  
    - Mehrfach mussten falsch gepushte Versionen manuell zurückgesetzt oder repariert werden, was zusätzlichen Aufwand und Zeitverlust bedeutete.  
    - Wir haben erkannt, wie wichtig es ist, sich an Absprachen zu halten, Änderungen lokal zu testen und nur funktionierenden Code gemeinsam zu teilen – insbesondere bei         paralleler Arbeit an denselben Dateien.
