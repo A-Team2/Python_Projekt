@@ -47,7 +47,7 @@ Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als
 
 Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auch sicher, dass alle User Stories sauber und unabhängig voneinander aufrufbar sind – ein zentraler Aspekt für die Präsentation und Qualitätssicherung unseres Systems.
 
-Was noch kurz zu erwähnen ist: Zu Beginn des Projekts wollten wir als Vierergruppe mit einer To-Do/Doing/Done-Tabelle arbeiten und regelmäßige Sprint Plannings durchführen, um die Aufgaben strukturiert zu verteilen und den Fortschritt zu kontrollieren – insbesondere, da solche Methoden in größeren Teams essenziell sind. Nach der Gruppenaufteilung war dies für uns nicht mehr notwendig, da wir uns zu zweit sowohl in der Schule als auch privat regelmäßig trafen und die Planung direkt vor Ort abstimmten. Zusätzlich standen wir täglich über Textnachrichten im Austausch, was eine enge und effiziente Zusammenarbeit ermöglichte.
+Was noch kurz zu erwähnen ist: Zu Beginn des Projekts wollten wir als Vierergruppe mit einer To-Do/Doing/Done-Tabelle arbeiten und regelmässige Sprint Plannings durchführen, um die Aufgaben strukturiert zu verteilen und den Fortschritt zu kontrollieren – insbesondere, da solche Methoden in grösseren Teams essenziell sind. Nach der Gruppenaufteilung war dies für uns nicht mehr notwendig, da wir uns zu zweit sowohl in der Schule als auch privat regelmässig trafen und die Planung direkt vor Ort abstimmten. Zusätzlich standen wir täglich über Textnachrichten im Austausch, was eine enge und effiziente Zusammenarbeit ermöglichte.
 
 ---
 
