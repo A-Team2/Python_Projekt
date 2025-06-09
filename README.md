@@ -2,6 +2,8 @@
 
 Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python“ (FS25)** an der FHNW umgesetzt. Ziel war es, ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte wie objektorientierte Programmierung, eine mehrschichtige Architektur und Datenbankzugriffe mit SQLite abbildet und die vorgegebenen User Stories erfüllt.
 
+Link zum Deepnote: https://deepnote.com/workspace/FHNW-491ae2da-b8a3-4506-8e80-d2b3749c323a/project/Python-TeamA-2-f1e70507-cf8e-446b-8cdf-67eb343bd2db/notebook/A-Team-2-MiroandGianluca-23c86348c3a64d9c8f3ee572d2828195?utm_source=share-modal&utm_medium=product-shared-content&utm_campaign=notebook&utm_content=f1e70507-cf8e-446b-8cdf-67eb343bd2db
+
 ---
 
 ## 1. Projektübersicht
