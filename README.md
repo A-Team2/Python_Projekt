@@ -2,6 +2,8 @@
 
 Dieses Projekt wurde im Rahmen des Moduls **„Anwendungsentwicklung mit Python“ (FS25)** an der FHNW umgesetzt. Ziel war es, ein funktionales Hotelreservierungssystem zu entwickeln, welches Konzepte wie objektorientierte Programmierung, eine mehrschichtige Architektur und Datenbankzugriffe mit SQLite abbildet und die vorgegebenen User Stories erfüllt.
 
+Link zum Deepnote: https://deepnote.com/workspace/FHNW-491ae2da-b8a3-4506-8e80-d2b3749c323a/project/Python-TeamA-2-f1e70507-cf8e-446b-8cdf-67eb343bd2db/notebook/A-Team-2-MiroandGianluca-23c86348c3a64d9c8f3ee572d2828195?utm_source=share-modal&utm_medium=product-shared-content&utm_campaign=notebook&utm_content=f1e70507-cf8e-446b-8cdf-67eb343bd2db
+
 ---
 
 ## 1. Projektübersicht
@@ -45,7 +47,7 @@ Nach dem Start des Programms kann ausgewählt werden, ob man als *User* oder als
 
 Diese Lösung erleichtert nicht nur das Testen der Anwendung, sondern stellt auch sicher, dass alle User Stories sauber und unabhängig voneinander aufrufbar sind – ein zentraler Aspekt für die Präsentation und Qualitätssicherung unseres Systems.
 
-Was noch kurz zu erwähnen ist: Zu Beginn des Projekts wollten wir als Vierergruppe mit einer To-Do/Doing/Done-Tabelle arbeiten und regelmäßige Sprint Plannings durchführen, um die Aufgaben strukturiert zu verteilen und den Fortschritt zu kontrollieren – insbesondere, da solche Methoden in größeren Teams essenziell sind. Nach der Gruppenaufteilung war dies für uns nicht mehr notwendig, da wir uns zu zweit sowohl in der Schule als auch privat regelmäßig trafen und die Planung direkt vor Ort abstimmten. Zusätzlich standen wir täglich über Textnachrichten im Austausch, was eine enge und effiziente Zusammenarbeit ermöglichte.
+Was noch kurz zu erwähnen ist: Zu Beginn des Projekts wollten wir als Vierergruppe mit einer To-Do/Doing/Done-Tabelle arbeiten und regelmässige Sprint Plannings durchführen, um die Aufgaben strukturiert zu verteilen und den Fortschritt zu kontrollieren – insbesondere, da solche Methoden in grösseren Teams essenziell sind. Nach der Gruppenaufteilung war dies für uns nicht mehr notwendig, da wir uns zu zweit sowohl in der Schule als auch privat regelmässig trafen und die Planung direkt vor Ort abstimmten. Zusätzlich standen wir täglich über Textnachrichten im Austausch, was eine enge und effiziente Zusammenarbeit ermöglichte.
 
 ---
 
