@@ -3,9 +3,9 @@ import pandas as pd
 
 
 class AnalyticsManager:
-    """
-    Business-Logic-Layer für Analysen (z.B. Belegungsraten).
-    """
+    
+    #Business-Logic-Layer für Analysen (z.B. Belegungsraten).
+   
 
     def __init__(self):
         # Initialisiere die DataAccess-Klasse für Analytics

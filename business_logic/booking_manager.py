@@ -44,7 +44,7 @@ class BookingManager:
         # 1) Validierung
         from model.guest import Guest
         if guest is None or not isinstance(guest, Guest):
-            raise ValueError("guest is required and must be a Guest instance")
+            raise ValueError("guest wird benötigt und muss ein Guest-Objekt sein.")
         # 2) DB‐Rows abholen
         rows = self.__booking_da.read_bookings_by_guest_id(guest.guest_id)
         # 3) in Booking‐Objekte wandeln
@@ -72,11 +72,11 @@ class BookingManager:
     # Storniert eine Buchung
     def cancel_booking(self, booking_id: int) -> None:
         if not isinstance(booking_id, int) or booking_id < 1:
-            raise ValueError("booking_id must be a positive integer")
+            raise ValueError("booking_id muss eine positive Ganzzahl sein.")
         # Prüfungen, ob die Buchung existiert
         booking = self.read_booking(booking_id)
         if booking is None:
-            raise ValueError(f"No booking with id {booking_id}")
+            raise ValueError(f"Keine buchung mit der BuchungsId: {booking_id}")
         # 1) DB-Flag setzen
         self.__booking_da.cancel_booking(booking_id)
         # 2) Objekt ebenfalls updaten
